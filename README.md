@@ -1,26 +1,26 @@
 
-This project is the continuation of the Legacy Code Judge project which was created earlier in Spring 2022. 
+This project is the continuation of the Legacy Code Judge project which was created earlier in Fall 2022. 
 
 Client : Ritchey
-TA :  Mayukh RoyChowdhury, Ravi Pranjal
+TA :  Mayukh RoyChowdhury.
 
 Members of the project :
 
-1. Gokul Sai Doppalapudi
-2. Rajendra Thottempudi
-3. Shyam Prasad Nagulavancha
-4. Aravind Badavath
-5. Chandu Akula
-6. Chetan Nc 
+1) Praveen Kumar Maddikuntla
+2) Nagarjuna Kolloju
+3) Nachiket N Umesh Naganure
+4) Druva Kumar Gunda
+5) Anmol Anand
+6) Loksubhash Pulivarthi
 
 
 Proposed New Functionalities for this semester :
 
-1. Tagging for different types of Problems
-2. Sorting and searching with tags
-3. Ability to add new test cases 
-4. Differentiating between Instructor and Student Profiles
-5. Ability to group students and provide Group statistics
-6. Providing ability for Instructors to create groups of students and problems
-7. Activating and Deactivating test cases
-
+1. Creation of global/group level ranking system.
+2. Addition of multi topic system for problems.
+3. Adding the level of difficulty to each problem (Easy| Medium| Hard)
+4. Batch testcase upload case functionality will be added
+5. Filter problems based on 
+        I) difficulty 
+        II)tags
+        III)solved/unsolved
