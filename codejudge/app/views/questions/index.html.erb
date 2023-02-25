@@ -1,0 +1,24 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Welcome Instructor!</h1>
+
+<div class="table col-12">
+  <table>
+    <thead>
+      <tr>
+        <th><h1 class="col-12">Problems</h1></th>
+        <th><%= link_to "New Problem", new_problem_path, :class => "button" %></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @problems.each do |problem| %>
+        <tr>
+          <td><b><%=link_to problem.title, problem %></b></td>
+          <th colspan="2"></th>
+          <td><%= link_to "", problem %></td>
+          <td><%= link_to "", problem %></td>
+        </tr>
+        <% end %>
+    </tbody>
+  </table>
+</div>

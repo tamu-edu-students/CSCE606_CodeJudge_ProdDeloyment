@@ -14,7 +14,13 @@
 
   <body class="<%= cookies[:color_mode] ? cookies[:color_mode] : "light" %>" >
     <div id="application-page" class="layout">
-      <%= render "partials/header" %>
+        <% if current_user.role? :instructor %>
+          <%= render 'partials/instructorHeader' %>
+        <% elsif current_user.role? :admin %>
+          <%= render 'partials/adminheader' %>
+        <% else %>
+          <%= render 'partials/header' %>
+        <% end %>
       <button id="color-mode-button" class="button">Switch Color Mode</button>
       <main>
         <div class="container">

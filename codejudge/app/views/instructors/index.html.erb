@@ -1,0 +1,26 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Welcome Instructor!</h1>
+<div class="table col-12">
+  <table>
+    <thead>
+      <tr>
+        <th><h1 class="col-12">Classes</h1></th>
+        <th><h3 class="col-12">Classcode</h3></th>
+        
+        <th><%= link_to "New Class", new_group_path, :class => "button" %></th>
+      </tr>
+    </thead>
+    <tbody>
+    <% for group in @groups %>
+      <tr>
+        <td><b><%=link_to group.group_title, details_group_url(group.id)%></b></td>
+        <td><b><%=link_to group.classcode, details_group_url(group.id)%></b></td>
+        <th colspan="2"></th>
+        <td><%= link_to "Modify", edit_group_path(group) %></td>
+        <td><%= link_to "Delete", group , method: :delete %></td>
+      </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

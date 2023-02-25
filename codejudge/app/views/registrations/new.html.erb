@@ -46,7 +46,7 @@
   <% end %>
 
   <%= form.label :password, "Password" %>
-  <%= form.text_field :password %>
+  <%= password_field_tag :password %>
   <% if @user.errors.include?(:password) %>
     <div class="error">
       <% @user.errors.full_messages_for(:password).each do |error_message| %>
@@ -56,7 +56,7 @@
   <% end %>
 
   <%= form.label :password_confirmation, "Repeat Password" %>
-  <%= form.text_field :password_confirmation %>
+  <%= password_field_tag :password_confirmation %>
   <% if @user.errors.include?(:password_confirmation) %>
     <div class="error">
       <% @user.errors.full_messages_for(:password_confirmation).each do |error_message| %>
@@ -65,7 +65,14 @@
     </div>
   <% end %>
 
-  <%= form.button "sign up", :type => "submit", :id => "register_btn", :class => "button" %>
+
+
+  <%= form.label :logintype, "Login Type" %>
+  <%= select_tag :logintype, options_for_select([ "Instructor", "Student" ]), prompt: 'Choose one...' %>
+
+ 
+
+<%= form.button "sign up", :type => "submit", :id => "register_btn", :class => "button" %>
 <% end %>
 <%= google_sign_in_button proceed_to: create_register_url, data: {turbo: "false"}, class: "button button--google" do %>
   <%= embedded_svg 'google_logo' %> Sign up with Google
