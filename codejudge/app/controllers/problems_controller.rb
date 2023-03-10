@@ -86,6 +86,7 @@ class ProblemsController < ApplicationController
   def new
     @tags = Tag.all
     @problem = Problem.new
+    @languages = Language.all
     authorize @problem
     # @test_cases = @problem.test_cases
   end
