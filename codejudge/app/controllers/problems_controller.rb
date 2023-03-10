@@ -8,6 +8,7 @@ class ProblemsController < ApplicationController
   # GET /problems or /problems.json
   def index
     @tags = Tag.all
+    @languages = Language.all
     @problems = Problem.all
     @map = Hash.new
     for prb in @problems do
@@ -153,11 +154,11 @@ class ProblemsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def problem_params
-      params.require(:problem).permit(:title, :body, test_cases_attributes: [:id, :input, :output, :example, :_destroy])
+      params.require(:problem).permit(:title, :body, :tags, :languages, test_cases_attributes: [:id, :input, :output, :example, :_destroy])
     end
 
     def tag_params
-      params.require(:tags)
+      # params.require(:tags)
     end
 
     def search_tag_params
