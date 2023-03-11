@@ -12,8 +12,20 @@ class ProblemsController < ApplicationController
     @problems = Problem.all
     @map = Hash.new
     for prb in @problems do
-      tag_name = Tag.where(id: ProblemTag.where(problem_id: prb.id).pluck(:tag_id)).pluck(:tag)
-      @map.store(prb.title,tag_name[0])
+      prb_tags = ProblemTag.where(problem_id: prb.id)
+      if prb_tags.present?
+        prb_tags.each do |prb_tag|
+          if prb_tag.tag_id.present?
+            tag_name = Tag.where(id: prb_tag.tag_id).pluck(:tag)
+            @map.store(prb.id,tag_name[0])
+          else
+            @map.store(prb.id,"Tag Not Available")
+          end
+        end
+      else
+        @map.store(prb.id,"Tag Not Available")
+      end
+      # Rails.logger.debug(@map)
     end
     
     render :index
