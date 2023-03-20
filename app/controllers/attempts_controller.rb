@@ -31,14 +31,50 @@ class AttemptsController < ApplicationController
   def edit
   end
 
+  # # POST /attempts or /attempts.json
+  # # This function pulls the test cases for the problem and sends it off to Sidekiq
+  # def create
+  #   @attempt = Attempt.new
+
+  #   language = Language.where(pretty_name: params[:attempt][:language]).pick(:name)
+
+  #   language_id = Language.where(name: language).pick(:id)
+
+  #   @attempt.code = File.read(params[:attempt][:sourcecode])
+  #   @attempt.user_id = session[:user_id]
+  #   @attempt.problem_id = params[:problem_id]
+  #   @attempt.language_id = language_id
+
+  #   @testcases_query = TestCase.left_outer_joins(:problem).where(problem_id: @attempt.problem_id).map{ |r| [r.input, r.output]}
+
+  #   @testcases = {}
+  #   respond_to do |format|
+  #     if @attempt.save
+  #       format.html { redirect_to attempt_url(@attempt), notice: "Attempt was successfully created." }
+  #       format.json { render :show, status: :created, location: @attempt }
+  #     else
+  #       format.html { render :new, status: :unprocessable_entity }
+  #       format.json { render json: @attempt.errors, status: :unprocessable_entity }
+  #     end
+  #   end
+
+  #   api_timeout = 1
+
+  #   @testcases_query.each_with_index do |item, index|
+  #     timeout = index*api_timeout
+  #     SubmitCodeJob.perform_at(timeout.seconds.from_now, item[0], item[1], language, @attempt.code, @testcases_query.index(item), current_user.id, @attempt.id)
+  #   end
+  # end
+
   # POST /attempts or /attempts.json
-  # This function pulls the test cases for the problem and sends it off to Sidekiq
-  def create
-    @attempt = Attempt.new
+# This function pulls the test cases for the problem and sends it off to Sidekiq
+def create
+  @attempt = Attempt.new
 
-    language = Language.where(pretty_name: params[:attempt][:language]).pick(:name)
+  language = Language.find_by(pretty_name: params[:attempt][:language])
 
-    language_id = Language.where(name: language).pick(:id)
+  if language
+    language_id = language.id
 
     @attempt.code = File.read(params[:attempt][:sourcecode])
     @attempt.user_id = session[:user_id]
@@ -62,9 +98,17 @@ class AttemptsController < ApplicationController
 
     @testcases_query.each_with_index do |item, index|
       timeout = index*api_timeout
-      SubmitCodeJob.perform_at(timeout.seconds.from_now, item[0], item[1], language, @attempt.code, @testcases_query.index(item), current_user.id, @attempt.id)
+      SubmitCodeJob.perform_at(timeout.seconds.from_now, item[0], item[1], language.name, @attempt.code, @testcases_query.index(item), current_user.id, @attempt.id)
+    end
+  else
+    # handle the case when the language is nil
+    respond_to do |format|
+      format.html { render :new, status: :unprocessable_entity }
+      format.json { render json: { error: "Language not found" }, status: :unprocessable_entity }
     end
   end
+end
+
 
   # PATCH/PUT /attempts/1 or /attempts/1.json
   def update
