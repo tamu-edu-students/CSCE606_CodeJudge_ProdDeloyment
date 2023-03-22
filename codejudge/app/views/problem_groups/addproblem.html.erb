@@ -12,3 +12,25 @@
   <%= form.button "Add", :type => "submit", :id => "register_btn", :class => "button" %>
   <%= link_to "Back", instructors_path, :class => "button" %>
 <% end %>
+<script>
+  const form = document.querySelector('#add_problem_form');
+  form.addEventListener('submit', function (event) {
+    event.preventDefault();
+    fetch(event.target.action, {
+      method: form.method,
+      body: new FormData(form)
+    })
+    .then(response => {
+      if (response.ok) {
+        alert("Problem added successfully.");
+        form.reset();
+      } else {
+        alert("Error adding problem. Please try again.");
+      }
+    })
+    .catch(error => {
+      console.error('Error adding problem:', error);
+      alert("Error adding problem. Please try again.");
+    });
+  });
+</script> 
