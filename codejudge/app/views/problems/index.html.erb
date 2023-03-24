@@ -14,29 +14,30 @@
   <table>
     <thead>
     <tr>
-    <th>
-    <h5> search problems with tags<h5>
-    <br>
-        <%= form_with url: searchtag_path, local: true, method: :get do |f|%>
-          <%= select_tag :tags, options_from_collection_for_select(@tags, 'id', 'tag'), class: 'form-control col-md-7 col-xs-12', id: 'countries_select' %>
+      <th>
+        <h5> Search Problems with Tags</h5>
+        <br>
+        <%= form_with url: searchtag_path, local: true, method: :get do |f| %>
+          <%= f.select :search_tag, options_from_collection_for_select(@tags, 'id', 'tag'), prompt: "Please Select", class: 'form-control col-md-7 col-xs-12', id: 'countries_select' %>
           <%= f.submit "Search" %>
-        <%end%>
-        </th></tr>
-      <tr>
-        <th>Title</th>
-        <th colspan="2"></th>
-        <th>Tags</th>
-        <th colspan="2"></th>
-      </tr>
+        <% end %>
+      </th>
+    </tr>
+    <tr>
+      <th>Title</th>
+      <th colspan="2"></th>
+      <th>Tags</th>
+      <th colspan="2"></th>
+    </tr>
     </thead>
     <tbody>
-      <% @problems.each do |problem| %>
+    <% @problems.each do |problem| %>
       <tr>
-        <td><%=link_to problem.title, problem %></td>
+        <td><%= link_to problem.title, problem %></td>
         <th colspan="2"></th>
-        <td><%=link_to @map[problem.title], problem %></td>
+        <td><%= link_to @map[problem.id], problem  %></td>
       </tr>
-      <% end %>
+    <% end %>
     </tbody>
   </table>
 </div>

@@ -8,13 +8,14 @@ class ProblemsController < ApplicationController
   # GET /problems or /problems.json
   def index
     @tags = Tag.all
+    @languages = Language.all
     @problems = Problem.all
     @map = Hash.new
     for prb in @problems do
-      tag_name = Tag.where(id: ProblemTag.where(problem_id: prb.id).pluck(:tag_id)).pluck(:tag)
-      @map.store(prb.title,tag_name[0])
+      tag_name = Tag.where(id: prb.tags).pick(:tag)
+      puts tag_name
+      @map.store(prb.id, tag_name)
     end
-    
     render :index
   end
 
@@ -27,9 +28,8 @@ class ProblemsController < ApplicationController
   end
 
   def searchtag
-    @tagname = Tag.where(id: tag_params).pluck(:tag)
-    @tag = ProblemTag.where(tag_id: tag_params).pluck(:problem_id)
-    @prbs= Problem.where(id: @tag)
+    @problems = Problem.where(tags: search_tag_params)
+    @tag_name = Tag.where(id: search_tag_params).pick(:tag)
   end
 
   def solution_upload
@@ -85,12 +85,16 @@ class ProblemsController < ApplicationController
   def new
     @tags = Tag.all
     @problem = Problem.new
+    @languages = Language.all
     authorize @problem
     # @test_cases = @problem.test_cases
   end
 
   # GET /problems/1/edit
   def edit
+    @problem = Problem.find params[:id]
+    @tags = Tag.all
+    @languages = Language.all
     authorize :problem
     @tags = Tag.all
   end
@@ -153,15 +157,15 @@ class ProblemsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def problem_params
-      params.require(:problem).permit(:title, :body, test_cases_attributes: [:id, :input, :output, :example, :_destroy])
+      params.require(:problem).permit(:title, :body, :tags, :languages, test_cases_attributes: [:id, :input, :output, :example, :_destroy])
     end
 
     def tag_params
-      params.require(:tags)
+      params[:problem][:tags]
     end
 
     def search_tag_params
-      params.require(:searchtag)
+      params[:search_tag]
     end
 
     def set_languages
