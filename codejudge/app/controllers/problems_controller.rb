@@ -12,22 +12,10 @@ class ProblemsController < ApplicationController
     @problems = Problem.all
     @map = Hash.new
     for prb in @problems do
-      prb_tags = ProblemTag.where(problem_id: prb.id)
-      if prb_tags.present?
-        prb_tags.each do |prb_tag|
-          if prb_tag.tag_id.present?
-            tag_name = Tag.where(id: prb_tag.tag_id).pluck(:tag)
-            @map.store(prb.id,tag_name[0])
-          else
-            @map.store(prb.id,"Tag Not Available")
-          end
-        end
-      else
-        @map.store(prb.id,"Tag Not Available")
-      end
-      # Rails.logger.debug(@map)
+      tag_name = Tag.where(id: prb.tags).pick(:tag)
+      puts tag_name
+      @map.store(prb.id, tag_name)
     end
-    
     render :index
   end
 
@@ -40,9 +28,8 @@ class ProblemsController < ApplicationController
   end
 
   def searchtag
-    @tagname = Tag.where(id: tag_params).pluck(:tag)
-    @tag = ProblemTag.where(tag_id: tag_params).pluck(:problem_id)
-    @prbs= Problem.where(id: @tag)
+    @problems = Problem.where(tags: search_tag_params)
+    @tag_name = Tag.where(id: search_tag_params).first.tag
   end
 
   def solution_upload
@@ -171,11 +158,11 @@ class ProblemsController < ApplicationController
     end
 
     def tag_params
-      # params.require(:tags)
+      params[:problem][:tags]
     end
 
     def search_tag_params
-      params.require(:searchtag)
+      params[:search_tag]
     end
 
     def set_languages
