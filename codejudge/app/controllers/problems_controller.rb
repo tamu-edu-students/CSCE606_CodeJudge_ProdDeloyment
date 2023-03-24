@@ -29,7 +29,7 @@ class ProblemsController < ApplicationController
 
   def searchtag
     @problems = Problem.where(tags: search_tag_params)
-    @tag_name = Tag.where(id: search_tag_params).first.tag
+    @tag_name = Tag.where(id: search_tag_params).pick(:tag)
   end
 
   def solution_upload

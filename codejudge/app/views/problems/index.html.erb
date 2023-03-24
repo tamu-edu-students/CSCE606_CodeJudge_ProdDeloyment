@@ -18,7 +18,7 @@
         <h5> Search Problems with Tags</h5>
         <br>
         <%= form_with url: searchtag_path, local: true, method: :get do |f| %>
-          <%= f.select :tags, options_from_collection_for_select(@tags, 'id', 'tag'), prompt: "Please Select", class: 'form-control col-md-7 col-xs-12', id: 'countries_select' %>
+          <%= f.select :search_tag, options_from_collection_for_select(@tags, 'id', 'tag'), prompt: "Please Select", class: 'form-control col-md-7 col-xs-12', id: 'countries_select' %>
           <%= f.submit "Search" %>
         <% end %>
       </th>
