@@ -92,6 +92,9 @@ class ProblemsController < ApplicationController
 
   # GET /problems/1/edit
   def edit
+    @problem = Problem.find params[:id]
+    @tags = Tag.all
+    @languages = Language.all
     authorize :problem
     @tags = Tag.all
   end
