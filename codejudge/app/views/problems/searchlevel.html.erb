@@ -1,22 +1,23 @@
 <div class="col-12">
   <%= render "partials/link", copy: "Back", path: :back, icon: "chevron-left", classes: "link--back" %>
 </div>
-<h1> Problems with <span><%= @tag_name %></span></h1>
+
+<h1> Problems with <span><%= @level_name %></span></h1>
 <div class="table col-12">
-<table>
-  <thead>
+  <table>
+    <thead>
     <tr>
       <th>Title</th>
       <th colspan="2"></th>
     </tr>
-  </thead>
-  <tbody>
+    </thead>
+    <tbody>
     <% @problems.each do |problem| %>
-    <tr>
-      <td><%=link_to problem.title, problem %></td>
-      <th colspan="2"></th>
-    </tr>
+      <tr>
+        <td><%=link_to problem.title, problem %></td>
+        <th colspan="2"></th>
+      </tr>
     <% end %>
-  </tbody>
-</table>
+    </tbody>
+  </table>
 </div>
