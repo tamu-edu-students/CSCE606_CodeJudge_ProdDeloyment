@@ -7,14 +7,19 @@ class ProblemsController < ApplicationController
 
   # GET /problems or /problems.json
   def index
+    @difficulty_levels = DifficultyLevel.all
+    puts @difficulty_levels
     @tags = Tag.all
     @languages = Language.all
     @problems = Problem.all
     @map = Hash.new
+    @map_level = Hash.new
     for prb in @problems do
       tag_name = Tag.where(id: prb.tags).pick(:tag)
+      level_name = DifficultyLevel.where(id: prb.level).pick(:level)
       puts tag_name
       @map.store(prb.id, tag_name)
+      @map_level.store(prb.id, level_name)
     end
     render :index
   end
@@ -28,8 +33,17 @@ class ProblemsController < ApplicationController
   end
 
   def searchtag
+    puts search_tag_params
     @problems = Problem.where(tags: search_tag_params)
     @tag_name = Tag.where(id: search_tag_params).pick(:tag)
+  end
+
+  def searchlevel
+    puts "level!!"
+    puts search_level_params
+    @problems = Problem.where(level: search_level_params)
+    @level_name = DifficultyLevel.where(id: search_level_params).pick(:level)
+    puts @level_name
   end
 
   def solution_upload
@@ -86,6 +100,7 @@ class ProblemsController < ApplicationController
     @tags = Tag.all
     @problem = Problem.new
     @languages = Language.all
+    @difficulty_levels = DifficultyLevel.all
     authorize @problem
     # @test_cases = @problem.test_cases
   end
@@ -95,15 +110,18 @@ class ProblemsController < ApplicationController
     @problem = Problem.find params[:id]
     @tags = Tag.all
     @languages = Language.all
+    @difficulty_levels = DifficultyLevel.all
     authorize :problem
-    @tags = Tag.all
+    # @tags = Tag.all
   end
 
   # POST /problems or /problems.json
   def create
     @problem = Problem.new(problem_params)
     @problem_tag = ProblemTag.new
+    @problem_level = DifficultyLevel.new
     @problem_tag.tag_id = tag_params
+    @problem_tag.difficulty_level_id = level_params
     authorize @problem
     puts "entering in create"
 
@@ -131,6 +149,7 @@ class ProblemsController < ApplicationController
     @problem_tag = ProblemTag.where(problem_id: id).first
     puts @problem_tag.inspect
     @problem_tag.tag_id = tag_params
+    @problem_tag.difficulty_level_id = level_params
     @problem_tag.save
     if @problem.update(problem_params)
       redirect_to problems_path
@@ -157,15 +176,23 @@ class ProblemsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def problem_params
-      params.require(:problem).permit(:title, :body, :tags, :languages, test_cases_attributes: [:id, :input, :output, :example, :_destroy])
+      params.require(:problem).permit(:title, :body, :tags, :level, :languages,  test_cases_attributes: [:id, :input, :output, :example, :_destroy])
     end
 
     def tag_params
       params[:problem][:tags]
     end
 
+    def level_params
+      params[:problem][:level]
+    end
+
     def search_tag_params
       params[:search_tag]
+    end
+    def search_level_params
+      params[:search_level]
+      # puts search_level
     end
 
     def set_languages
