@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_03_24_085607) do
+ActiveRecord::Schema[7.0].define(version: 2023_03_10_021540) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -34,13 +34,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_24_085607) do
     t.bigint "problem_id", null: false
     t.index ["problem_id"], name: "index_attempts_on_problem_id"
     t.index ["user_id"], name: "index_attempts_on_user_id"
-  end
-
-  create_table "difficulty_levels", force: :cascade do |t|
-    t.string "level"
-    t.text "description"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
   end
 
   create_table "groups", force: :cascade do |t|
@@ -72,7 +65,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_24_085607) do
     t.bigint "tag_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "difficulty_level_id"
   end
 
   create_table "problems", force: :cascade do |t|
@@ -84,7 +76,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_24_085607) do
     t.text "instructor_solution"
     t.string "tags"
     t.string "languages"
-    t.string "level"
     t.index ["author_id"], name: "index_problems_on_author_id"
   end
 
@@ -148,7 +139,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_24_085607) do
   add_foreign_key "attempts", "users"
   add_foreign_key "problem_groups", "groups"
   add_foreign_key "problem_groups", "problems"
-  add_foreign_key "problem_tags", "difficulty_levels"
   add_foreign_key "problem_tags", "problems"
   add_foreign_key "problem_tags", "tags"
   add_foreign_key "problems", "users", column: "author_id"

@@ -138,15 +138,3 @@ new_tags.each do |new_tag|
     description: new_tag[1]
   )
 end
-
-new_difficulty_levels = [
-  ["Easy", "Easy"],
-  ["Medium", "Medium"],
-  ["Hard", "Hard"],
-]
-new_difficulty_levels.each do |level|
-  DifficultyLevel.create(
-    level: level[0],
-    description: level[1]
-  )
-end

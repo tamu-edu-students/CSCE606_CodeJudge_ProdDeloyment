@@ -7,7 +7,6 @@ Rails.application.routes.draw do
   post '/solution_upload_form_path', to: 'problems#solution_upload'
   post '/problems/:id', to: 'problems#update'
   get '/searchtag', to: 'problems#searchtag'
-  get '/searchlevel', to: 'problems#searchlevel'
 
 
   resources :approved_requests
