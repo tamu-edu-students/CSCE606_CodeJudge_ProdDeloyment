@@ -1,48 +1,109 @@
-require "spec_helper"
+require 'rails_helper'
 
-class ProblemsControllerTest < ActionDispatch::IntegrationTest
-  setup do
-    @problem = problems(:one)
-  end
-
-  test "should get index" do
-    get problems_url
-    assert_response :success
-  end
-
-  test "should get new" do
-    get new_problem_url
-    assert_response :success
-  end
-
-  test "should create problem" do
-    assert_difference("Problem.count") do
-      post problems_url, params: { problem: {  } }
+RSpec.describe ProblemsController, type: :controller do
+  before(:all) do
+    if Problem.where(:title => "Array Sum").empty?
+      Problem.create(:title => "Array Sum",
+        :body => "this is the array sum problem",
+        :tags => 1,
+        :languages => Language.find_by(pretty_name: 'C').id)
     end
-
-    assert_redirected_to problem_url(Problem.last)
-  end
-
-  test "should show problem" do
-    get problem_url(@problem)
-    assert_response :success
-  end
-
-  test "should get edit" do
-    get edit_problem_url(@problem)
-    assert_response :success
-  end
-
-  test "should update problem" do
-    patch problem_url(@problem), params: { problem: {  } }
-    assert_redirected_to problem_url(@problem)
-  end
-
-  test "should destroy problem" do
-    assert_difference("Problem.count", -1) do
-      delete problem_url(@problem)
+    if ProblemTag.where(problem_id: Problem.find_by(:title => "Array Sum").id).empty?
+      ProblemTag.create(:problem_id => Problem.find_by(title: "Array Sum").id,
+        :tag_id => 1)
     end
-
-    assert_redirected_to problems_url
+    if Problem.where(:title => "Dynamic Arrays").empty?
+      Problem.create(:title => "Dynamic Arrays",
+        :body => "this is the dynamic arrays problem",
+        :tags => 2,
+        :languages => Language.find_by(pretty_name: 'Assembly').id)
+    end
+    if User.where(:username => "instructor").empty?
+      User.create(:username => "instructor",
+        :email => "instructor@xyz.com")
+      Assignment.create(:user_id => User.find_by(username: "instructor").id,
+        :role_id => Role.find_by(name: "instructor").id)
+    end
   end
+  before(:each) do
+    user = User.find_by(username: "instructor")
+    allow(controller).to receive(:current_user).and_return(user)
+  end
+
+  describe 'check problem main page' do
+    it 'check the number of problems  on the main page' do
+      get :index, params: {}
+      expect(assigns(:problems).count).to eq(4) # 2 porblems were added in this test and two problems were added in test db seed
+    end
+    it 'check if the added problems are present on the main page' do
+      get :index, params: {}
+      expect(assigns(:problems)).to include(Problem.find_by(title: 'Array Sum'))
+      expect(assigns(:problems)).to include(Problem.find_by(title: 'Dynamic Arrays'))
+    end
+    it 'checks if the particular problem\'s page has all the problem attributes mentioned' do
+      problem = Problem.find_by(title: 'Array Sum')
+      get :index, params: {id: problem.id}
+      expect(assigns(:problems)).to include(problem)
+      expect(problem.title).to eq("Array Sum")
+      expect(problem.body).to eq("this is the array sum problem")
+      expect(problem.tags).to eq("1")
+      expect(problem.languages).to eq("4")
+    end
+  end
+
+  describe 'check show problem page' do 
+    it 'check the problem attributes' do
+      problem = Problem.find_by(title: 'Array Sum')
+      get :show, params: {id: problem.id}
+      expect(assigns(:problem)).to eq(problem)
+      expect(assigns(:problem).title).to eq(problem.title)
+      expect(assigns(:problem).body).to eq(problem.body)
+    end
+    it 'check language restriction' do
+      problem = Problem.find_by(title: 'Array Sum')
+      get :show, params: {id: problem.id}
+      expect(assigns(:languages_list)).to eq(Language.where(id: problem.languages).pluck(:pretty_name))
+    end
+  end
+
+  describe 'check if problem tag is present' do
+    it 'check if it returns the problem tag' do
+      problem = Problem.find_by(title: "Array Sum")
+      expect(ProblemTag.where(problem_id: problem.id)).to exist
+    end
+  end
+
+  describe 'edit button check' do
+    it 'edit the language restriction and expect it to change' do
+      problem = Problem.find_by(title: 'Array Sum')
+      expect(ProblemTag.where(problem_id: problem.id)).to exist
+      new_languages = Language.find_by(pretty_name: 'COBOL').id
+      allow(controller).to receive(:tag_params).and_return(problem.tags)
+      allow(controller).to receive(:level_params).and_return(problem.level)
+      put :update, params: { id: problem.id, problem: { languages: new_languages } }
+      expect(Problem.find(problem.id).languages).to eq(new_languages.to_s)
+    end
+    it 'edit the tags and expect it to change' do
+      problem = Problem.find_by(title: 'Array Sum')
+      expect(ProblemTag.where(problem_id: problem.id)).to exist
+      new_tags = 7
+      allow(controller).to receive(:tag_params).and_return(new_tags)
+      allow(controller).to receive(:level_params).and_return(problem.level)
+      put :update, params: { id: problem.id, problem: { tags: new_tags } }
+      expect(Problem.find(problem.id).tags).to eq(new_tags.to_s)
+    end
+  end
+
+  describe 'delete and check if problem is present' do
+    it 'delete the problem and expect it to be absent in the db and from the main page' do
+      problem = Problem.find_by(title: 'Array Sum')
+      delete :destroy, params: {id: problem.id}
+      get :index, params: {}
+      expect(assigns(:problems).count).to eq(3)
+      expect(Problem.where(title: "Array Sum")).not_to exist
+    end
+  end
+
+
+
 end

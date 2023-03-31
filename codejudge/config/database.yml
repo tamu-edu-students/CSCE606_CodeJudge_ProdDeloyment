@@ -3,8 +3,8 @@ default: &default
   encoding: unicode
   database: "postgres"
   #<%= ENV['DATABASE_NAME'] %>
-  username: "postgres"
-  password: "Dgunda@03"
+  # username: "postgres"
+  # password: "Dgunda@03"
   # database: postgres
   # username: <%= ENV['DATABASE_USER'] %>
   # password: <%= ENV['DATABASE_PASSWORD'] %>
