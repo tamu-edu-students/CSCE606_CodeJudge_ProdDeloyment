@@ -18,6 +18,10 @@ RSpec.describe ProblemsController, type: :controller do
         :tags => 2,
         :languages => Language.find_by(pretty_name: 'Assembly').id)
     end
+    if ProblemTag.where(problem_id: Problem.find_by(:title => "Dynamic Arrays").id).empty?
+      ProblemTag.create(:problem_id => Problem.find_by(title: "Dynamic Arrays").id,
+        :tag_id => 2)
+    end
     if User.where(:username => "instructor").empty?
       User.create(:username => "instructor",
         :email => "instructor@xyz.com")
@@ -73,6 +77,16 @@ RSpec.describe ProblemsController, type: :controller do
     end
   end
 
+  describe 'check tags drop down' do
+    it 'select tags from drop down and check if appropriate problems are present or absent' do
+      allow(controller).to receive(:search_tag_params).and_return("1")
+      post :searchtag, params: {}
+      expect(assigns(:tag_name)).to eq("Array")
+      expect(assigns(:problems)).to include(Problem.find_by(title: 'Array Sum'))
+      expect(assigns(:problems)).not_to include(Problem.find_by(title: 'Dynamic Arrays'))
+    end
+  end
+
   describe 'edit button check' do
     it 'edit the language restriction and expect it to change' do
       problem = Problem.find_by(title: 'Array Sum')
@@ -103,7 +117,5 @@ RSpec.describe ProblemsController, type: :controller do
       expect(Problem.where(title: "Array Sum")).not_to exist
     end
   end
-
-
 
 end

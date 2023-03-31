@@ -32,7 +32,7 @@ class ProblemsController < ApplicationController
   end
 
   def searchtag
-    puts search_tag_params
+    # puts search_tag_params
     @problems = Problem.where(tags: search_tag_params)
     @tag_name = Tag.where(id: search_tag_params).pick(:tag)
   end
