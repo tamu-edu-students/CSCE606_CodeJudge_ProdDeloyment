@@ -17,7 +17,6 @@ class ProblemsController < ApplicationController
     for prb in @problems do
       tag_name = Tag.where(id: prb.tags).pick(:tag)
       level_name = DifficultyLevel.where(id: prb.level).pick(:level)
-      puts tag_name
       @map.store(prb.id, tag_name)
       @map_level.store(prb.id, level_name)
     end
@@ -26,14 +25,14 @@ class ProblemsController < ApplicationController
 
   # GET /problems/1 or /problems/1.json
   def show
-    @languages_list = Language.pluck(:pretty_name)
+    @languages_list = Language.where(id: @problem.languages).pluck(:pretty_name)
     @attempt = Attempt.new
     @visible_test_cases = @problem.visible_test_cases @problem, current_user.role
     @no_test_cases_prompt = current_user.role?(:student) ? "No example Test Cases provided." : "No Test Cases were specified for that Problem."
   end
 
   def searchtag
-    puts search_tag_params
+    # puts search_tag_params
     @problems = Problem.where(tags: search_tag_params)
     @tag_name = Tag.where(id: search_tag_params).pick(:tag)
   end
@@ -147,7 +146,7 @@ class ProblemsController < ApplicationController
     @tags = Tag.all
     id = @problem.id
     @problem_tag = ProblemTag.where(problem_id: id).first
-    puts @problem_tag.inspect
+    # puts @problem_tag.inspect
     @problem_tag.tag_id = tag_params
     @problem_tag.difficulty_level_id = level_params
     @problem_tag.save

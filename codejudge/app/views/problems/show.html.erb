@@ -27,10 +27,12 @@
 <section id ="file-upload">
   <%= form_for(@attempt) do |f| %>
     <%= hidden_field_tag(:problem_id, @problem.id) %>
-<%= f.select :language, @languages_list, { prompt: "Select Language" }, required: true %>
-    <%= f.label :sourcecode, "File upload:" %>
-    <%= f.file_field :sourcecode %>
-    <%= f.submit "Submit Code", :class => "button"%>
+    <h3>Language Restriction: <%= @languages_list.join(", ") %> </h3>
+    <div style="display: inline-block;">
+      <%= f.label :sourcecode, "Upload attempt:" %>
+      <%= f.file_field :sourcecode %>
+    </div>
+    <%= f.submit "Submit attempt", class: "button", style: "display: inline-block; vertical-align: top;" %>
   <% end %>
 </section>
 <% if @problem.instructor_solution %>
@@ -39,13 +41,13 @@
   <%end%>
 <%end%>
 <% if current_user.role? :instructor #&& @problem.author_id == cookies.signed[:user_id]#%>
-  <section id ="solution-upload">
-    <%= form_with(:url => solution_upload_form_path_url) do |f| %>
-      <%= hidden_field_tag(:problem_id, @problem.id) %>
-      <%= f.select :language, @languages_list, :prompt => "Select Solution Code Language" %>
-      <%= f.label :solution_sourcecode, "Solution File upload:" %>
+  <section id ="solution-upload"><%= form_with(url: solution_upload_form_path_url) do |f| %>
+    <%= hidden_field_tag(:problem_id, @problem.id) %>
+    <div style="display: inline-block;">
+      <%= f.label :solution_sourcecode, "Upload solution:" %>
       <%= f.file_field :solution_sourcecode %>
-      <%= f.submit submit_button_modal(@problem), :class => "button"%>
+    </div>
+    <%= f.submit "Submit solution", class: "button", style: "display: inline-block; vertical-align: top;" %>
     <% end %>
   </section>
 <% end %>
