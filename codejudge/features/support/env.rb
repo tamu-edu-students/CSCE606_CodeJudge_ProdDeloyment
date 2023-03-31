@@ -1,9 +1,9 @@
 require 'selenium-webdriver'
 require 'simplecov'
-require 'codecov'
+# require 'codecov'
 
 SimpleCov.start
-SimpleCov.formatter = SimpleCov::Formatter::Codecov
+# SimpleCov.formatter = SimpleCov::Formatter::Codecov
 SimpleCov.coverage_dir 'coverage/cucumber'
 
 # capabilities = Selenium::WebDriver::Remote::Capabilities.new

@@ -104,7 +104,7 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
   gem "webdrivers"
-  gem "codecov"
+  # gem "codecov"
 end
 
 group :production do
