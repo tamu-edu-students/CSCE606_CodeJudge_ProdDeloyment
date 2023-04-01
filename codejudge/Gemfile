@@ -109,6 +109,7 @@ group :test do
   gem "selenium-webdriver"
   gem "webdrivers"
   gem 'cuprite'
+  gem "codecov"
 end
 
 group :production do

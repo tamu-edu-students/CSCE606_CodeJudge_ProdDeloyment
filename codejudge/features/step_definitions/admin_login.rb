@@ -6,8 +6,8 @@ Given('the admin is on the login page') do
 end
 
 Given('the admin provides correct credentials') do
-  @browser.find_element(:id, "username").send_keys("admin")
-  @browser.find_element(:id, "password").send_keys("admin")
+  @browser.find_element(:id, "username").send_keys("test")
+  @browser.find_element(:id, "password").send_keys("password")
 end
 
 When('they click on the login button') do
@@ -16,7 +16,7 @@ When('they click on the login button') do
 end
 
 Then('they should get a positive feedback') do
-  raise "Fail" if @browser.find_element(:id, "notice").text != "Logged in successfully"
+  raise "Fail" if @browser.find_element(:id, "notice").text != "Logged in student successfully"
 end
 
 Given('the admin provides incorrect credentials') do
