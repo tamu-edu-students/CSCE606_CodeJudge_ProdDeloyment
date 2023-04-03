@@ -1,10 +1,12 @@
 require 'selenium-webdriver'
+require 'simplecov'
+
 # require 'simplecov'
 # require 'codecov'
 
-# SimpleCov.start
-# # SimpleCov.formatter = SimpleCov::Formatter::Codecov
-# SimpleCov.coverage_dir 'coverage/cucumber'
+SimpleCov.start
+# SimpleCov.formatter = SimpleCov::Formatter::Codecov
+SimpleCov.coverage_dir 'coverage/cucumber'
 
 # capabilities = Selenium::WebDriver::Remote::Capabilities.new
 # capabilities['platform'] = ENV['SELENIUM_PLATFORM'] || 'ANY'
@@ -24,7 +26,7 @@ browser = Selenium::WebDriver.for :chrome, capabilities: capabilities
 
 Before do |scenario|
 	@browser = browser
-	@url = "https://csce606-codejudge.herokuapp.com/"
+	@url = "http://127.0.0.1:3000/"
 end
 
 at_exit do

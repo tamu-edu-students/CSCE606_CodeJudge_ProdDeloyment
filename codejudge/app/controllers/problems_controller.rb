@@ -126,16 +126,21 @@ class ProblemsController < ApplicationController
 
     puts "Reaced create #################################"
 
-    respond_to do |format|
-      if @problem.save
-        @problem_tag.problem_id = @problem.id
-        if @problem_tag.save!
-          format.html { redirect_to problem_url(@problem), notice: "Problem was successfully created." }
-          format.json { render :show, status: :created, location: @problem }
+    if @problem.title.empty?
+      flash[:notice] = "The title cannot be nil."
+      redirect_to new_problem_path
+    else
+      respond_to do |format|
+        if @problem.save
+          @problem_tag.problem_id = @problem.id
+          if @problem_tag.save!
+            format.html { redirect_to problem_url(@problem), notice: "Problem was successfully created." }
+            format.json { render :show, status: :created, location: @problem }
+          end
+        else
+          format.html { render :new, status: :unprocessable_entity }
+          format.json { render json: @problem.errors, status: :unprocessable_entity }
         end
-      else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @problem.errors, status: :unprocessable_entity }
       end
     end
   end
