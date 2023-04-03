@@ -40,12 +40,12 @@
     </thead>
     <tbody>
     <% @problems.each do |problem| %>
-      <tr>
-        <td><%= link_to problem.title, problem %></td>
+      <tr id="notice2">
+        <td><%= link_to problem.title, problem , :id => 'probTitle'%></td>
         <th colspan="3"></th>
-        <td><%= link_to @map[problem.id], problem  %></td>
+        <td><%= link_to @map[problem.id], problem, :id => 'probTag' %></td>
         <th colspan="3"></th>
-        <td><%= link_to @map_level[problem.id], problem  %></td>
+        <td><%= link_to @map_level[problem.id], problem, :id => 'probDifficulty'  %></td>
       </tr>
     <% end %>
     </tbody>
