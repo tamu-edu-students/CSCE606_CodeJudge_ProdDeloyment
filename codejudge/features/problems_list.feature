@@ -6,5 +6,5 @@ Background:
 
 Scenario: 
     Given the admin goes to the problems page
-    Then they should see a list of problems
+    Then they should see a list of problems with tags and difficulty
 
