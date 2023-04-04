@@ -1,4 +1,5 @@
 <h3 class = "col-12">Adding New Problem</h3>
+<%= render 'layouts/flash' %>
 <%= form_with(:url => add_problem_form_path, :id => "add_problem_form", :class => "form-register", :method => :post, data: { turbo: false }) do |form| %>
   <%= form.label :group_id, "Class "+ params[:id] %>
   <br>
@@ -14,6 +15,10 @@
 <% end %>
 <script>
   const form = document.querySelector('#add_problem_form');
+  $(document).ready(function() {
+  var message = '<%= @message %>';
+  alert(message);
+});
   form.addEventListener('submit', function (event) {
     event.preventDefault();
     fetch(event.target.action, {
@@ -33,4 +38,4 @@
       alert("Error adding problem. Please try again.");
     });
   });
-</script> 
+</script>
