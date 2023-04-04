@@ -1,12 +1,12 @@
 <% if flash[:success] %>
     <p style="color: green"><%= flash[:success] %></p>
-<% elsif @error_message.present? %>
+<% elsif flash[:warning] %>
   
   <div class="container">
     <%# <div class="alert alert-danger alert-dismissible" role="alert">
       <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button> %>
         <script>
-            alert("<%= @error_message %>");
+            alert("<%= flash[:warning] %>");
         </script>
     <%# </div> %>
   </div>

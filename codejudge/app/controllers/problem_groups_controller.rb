@@ -63,16 +63,13 @@ class ProblemGroupsController < ApplicationController
     title_id = get_title_id()
     prob_id = title_id[params[:problem_title]]
     prob_ids = ProblemGroup.where(group_id: params[:group_id]).pluck(:problem_id)
-
-    puts prob_ids
-    if ProblemGroup.where(:group_id => params[:group_id]).exists? && ProblemGroup.where(group_id: params[:group_id]).pluck(:problem_id).include?(prob_id)
-      puts "here"
-      puts params[:group_id]
-      puts "here too"
-#       render json: { error: "Problem already exists." }, status: :unprocessable_entity
+  
+    if ProblemGroup.where(:group_id => params[:group_id]).exists? && prob_ids.include?(prob_id)
+      flash[:warning] = "Problem already in list!"
+      redirect_to request.referer
 
     else
-      puts "oooooo"
+      flash[:success] = "Problem added successfully!"
       @problem_group_temp = ProblemGroup.new
       @problem_group_temp.group_id = params[:group_id]
       @problem_group_temp.problem_id = prob_id
