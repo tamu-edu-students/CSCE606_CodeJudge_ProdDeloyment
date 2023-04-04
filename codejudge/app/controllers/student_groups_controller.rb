@@ -29,17 +29,23 @@ class StudentGroupsController < ApplicationController
   end
 
   def joinclass
-    group_id= Group.find_by(classcode: user_params_2).id
-    puts session[:user_id]
+    puts user_params_2
+    group_id= Group.find_by(classcode: user_params_2)
+    # puts session[:user_id]
+    puts group_id
+    if group_id != nil
+      group_id = group_id.id
+      @student_group = StudentGroup.new
+      @student_group.group_id = group_id
+      @student_group.user_id = session[:user_id]
 
-    @student_group = StudentGroup.new
-    @student_group.group_id = group_id
-    @student_group.user_id = session[:user_id]
-
-    if @student_group.save
-      redirect_to student_groups_path, notice: 'Joined class successfully'
+      if @student_group.save
+        redirect_to student_groups_path, notice: 'Joined class successfully'
+      else
+        redirect_to student_groups_path, notice: 'Unable to join class'
+      end
     else
-      redirect_to student_groups_path, notice: 'Unable to join class'
+      redirect_to student_groups_path, notice: 'class with given class code does not exist !'
     end
   end
 

@@ -50,6 +50,7 @@ class ProblemGroupsController < ApplicationController
 
   # DELETE /problem_groups/1 or /problem_groups/1.json
   def destroy
+    puts "destroy"
     @problem_group.destroy
 
     respond_to do |format|
@@ -62,21 +63,25 @@ class ProblemGroupsController < ApplicationController
     title_id = get_title_id()
     prob_id = title_id[params[:problem_title]]
     prob_ids = ProblemGroup.where(group_id: params[:group_id]).pluck(:problem_id)
-  
-    if ProblemGroup.where(:group_id => params[:group_id]).exists? && prob_ids.include?(prob_id)
+
+    puts prob_ids
+    if ProblemGroup.where(:group_id => params[:group_id]).exists? && ProblemGroup.where(group_id: params[:group_id]).pluck(:problem_id).include?(prob_id)
+      puts "here"
       puts params[:group_id]
-      flash[:warning] = "Problem already in list!"
-      redirect_to request.referer
+      puts "here too"
+#       render json: { error: "Problem already exists." }, status: :unprocessable_entity
 
     else
+      puts "oooooo"
       @problem_group_temp = ProblemGroup.new
       @problem_group_temp.group_id = params[:group_id]
       @problem_group_temp.problem_id = prob_id
+      puts @probelm_group_temp
       @problem_group_temp.save
-      flash[:success] = "Problem added successfully!"
       redirect_back(fallback_location: root_path)
     end
-end
+  end
+
 
   def get_title_id
     @problems = Problem.all
