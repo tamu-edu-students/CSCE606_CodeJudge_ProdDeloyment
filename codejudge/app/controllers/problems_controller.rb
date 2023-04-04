@@ -96,14 +96,14 @@ class ProblemsController < ApplicationController
 
   # GET /problems/new
   def new
-    if flash[:warning].present?
-      @error_message = flash[:warning]
-      flash[:warning] = nil
-    else
-      @error_message = nil
-      if @error_message.present?
-      end
-    end
+    # if flash[:warning].present?
+    #   @error_message = flash[:warning]
+    #   flash[:warning] = nil
+    # else
+    #   @error_message = nil
+    #   if @error_message.present?
+    #   end
+    # end
 
     @tags = Tag.all
     @problem = Problem.new
