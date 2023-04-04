@@ -57,17 +57,26 @@ class ProblemGroupsController < ApplicationController
       format.json { head :no_content }
     end
   end
-
+  
   def add_problem_form
     title_id = get_title_id()
     prob_id = title_id[params[:problem_title]]
-    @problem_group_temp = ProblemGroup.new
-    @problem_group_temp.group_id = params[:group_id]
-    @problem_group_temp.problem_id = prob_id
-    puts @probelm_group_temp
-    @problem_group_temp.save
-    redirect_back(fallback_location: root_path)
-  end
+    prob_ids = ProblemGroup.where(group_id: params[:group_id]).pluck(:problem_id)
+  
+    if ProblemGroup.where(:group_id => params[:group_id]).exists? && prob_ids.include?(prob_id)
+      puts params[:group_id]
+      flash[:warning] = "Problem already in list!"
+      redirect_to request.referer
+
+    else
+      @problem_group_temp = ProblemGroup.new
+      @problem_group_temp.group_id = params[:group_id]
+      @problem_group_temp.problem_id = prob_id
+      @problem_group_temp.save
+      flash[:success] = "Problem added successfully!"
+      redirect_back(fallback_location: root_path)
+    end
+end
 
   def get_title_id
     @problems = Problem.all
