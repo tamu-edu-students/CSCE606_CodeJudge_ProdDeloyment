@@ -66,7 +66,7 @@ class ProblemGroupsController < ApplicationController
   
     if ProblemGroup.where(:group_id => params[:group_id]).exists? && prob_ids.include?(prob_id)
       flash[:warning] = "Problem already in list!"
-      redirect_to request.referer
+      redirect_to request.referer || root_path
 
     else
       flash[:success] = "Problem added successfully!"

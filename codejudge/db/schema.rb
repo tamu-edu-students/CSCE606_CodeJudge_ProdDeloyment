@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_03_24_085607) do
+ActiveRecord::Schema[7.0].define(version: 2023_04_10_005636) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "adminpack"
   enable_extension "plpgsql"
@@ -66,6 +66,19 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_24_085607) do
     t.bigint "problem_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "problem_submissions", force: :cascade do |t|
+    t.string "user_id"
+    t.string "problem_id"
+    t.integer "total_attempts", default: 0
+    t.integer "correct_attempts", default: 0
+    t.integer "wrong_attempts", default: 0
+    t.integer "compilation_failures", default: 0
+    t.integer "time_limits_exceeded", default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id", "problem_id"], name: "index_problem_submissions_on_user_id_and_problem_id", unique: true
   end
 
   create_table "problem_tags", force: :cascade do |t|
