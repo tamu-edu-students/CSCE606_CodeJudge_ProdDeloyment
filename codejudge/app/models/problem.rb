@@ -3,8 +3,8 @@ class Problem < ApplicationRecord
   accepts_nested_attributes_for :test_cases, reject_if: :all_blank, allow_destroy: true
   has_many :attempts
   # has_many :attempts, dependent: :destroy
-  has_many :problem_tag, dependent: :delete_all
-
+  has_many :problem_tags, dependent: :destroy
+  accepts_nested_attributes_for :problem_tags, reject_if: :all_blank, allow_destroy: true
   def visible_test_cases(problem, role)
     role == :student.to_s ? problem.test_cases.where(example: true) : problem.test_cases
   end

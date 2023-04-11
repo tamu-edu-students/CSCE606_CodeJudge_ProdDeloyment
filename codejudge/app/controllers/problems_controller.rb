@@ -15,7 +15,18 @@ class ProblemsController < ApplicationController
     @map = Hash.new
     @map_level = Hash.new
     for prb in @problems do
-      tag_name = Tag.where(id: prb.tags).pick(:tag)
+      # problem_tags = Tag.joins(:ProblemTag).where(problem_tags: { problem_id: prb.id }).pluck(:tag)
+      # puts(problem_tags)
+      results = ActiveRecord::Base.connection.execute("
+  SELECT tags.tag
+  FROM problem_tags
+  JOIN tags ON problem_tags.tag_id = tags.id
+  WHERE problem_tags.problem_id = #{prb.id}
+                                                      ")
+      results.each do |row|
+        puts "#{row['tag']}"
+      end
+      tag_name = Tag.where(id: ProblemTag.where(problem_id: prb.id).pick(:tag_id)).pick(:tag)
       level_name = DifficultyLevel.where(id: prb.level).pick(:level)
       @map.store(prb.id, tag_name)
       @map_level.store(prb.id, level_name)
@@ -117,10 +128,10 @@ class ProblemsController < ApplicationController
   # POST /problems or /problems.json
   def create
     @problem = Problem.new(problem_params)
-    @problem_tag = ProblemTag.new
-    @problem_level = DifficultyLevel.new
-    @problem_tag.tag_id = tag_params
-    @problem_tag.difficulty_level_id = level_params
+    # @problem_tag = ProblemTag.new
+    # @problem_level = DifficultyLevel.new
+    # @problem_tag.tag_id = tag_params
+    # @problem_tag.difficulty_level_id = level_params
     authorize @problem
     puts "entering in create"
 
@@ -132,11 +143,11 @@ class ProblemsController < ApplicationController
     else
       respond_to do |format|
         if @problem.save
-          @problem_tag.problem_id = @problem.id
-          if @problem_tag.save!
+          # @problem_tag.problem_id = @problem.id
+          # if @problem_tag.save!
             format.html { redirect_to problem_url(@problem), notice: "Problem was successfully created." }
             format.json { render :show, status: :created, location: @problem }
-          end
+          # end
         else
           format.html { render :new, status: :unprocessable_entity }
           format.json { render json: @problem.errors, status: :unprocessable_entity }
@@ -180,7 +191,7 @@ class ProblemsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def problem_params
-      params.require(:problem).permit(:title, :body, :tags, :level, :languages,  test_cases_attributes: [:id, :input, :output, :example, :_destroy])
+      params.require(:problem).permit(:title, :body, :tags, :level, :languages, problem_tags_attributes: [:id, :tag_id, :_destroy], test_cases_attributes: [:id, :input, :output, :example, :_destroy], )
     end
 
     def tag_params

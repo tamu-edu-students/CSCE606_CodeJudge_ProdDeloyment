@@ -52,6 +52,8 @@ gem 'email_validator'
 # Nesred form support
 gem 'cocoon'
 
+gem 'simple_form'
+
 # Reduces boot times through caching; required in config/boot.rb
 gem "bootsnap", require: false
 
