@@ -22,27 +22,36 @@ class Grader
   end
 
   def grade
-    header_token = "Token " + "d8fd25f3-381e-4587-a910-76dce6f31e80"
-
-    @headers = {"Authorization" => header_token, "Content-type" => "application/json"}
-
+    # header_token = "Token " + 
+    puts "grader"
     @url = "https://glot.io/api/run/#{@language}/latest"
-
+    @headers = {
+      :content_type => :json,
+      :accept => :json,
+      :Authorization => "Token " + "74d34fa0-d888-4aaf-8b85-58b5a6918858"
+    }
+    
     results = {}
 
     #Left as array for future batching support
     @testcases.each do |key,value|
-
-      @array = Array.new
-
-      payload = {}
-      payload[:stdin] = key
-      payload[:files] = @array << {:name => "main#{@extension}", :content => @code}
-      payload = payload.to_json
-      response = RestClient.post(@url, payload, headers=@headers)
+      @payload = {
+        stdin: key,
+        files: [
+          {
+            name: "main#{@extension}",
+            content: @code
+          }
+        ]
+      }.to_json
+      puts @code
+      puts @payload
+      # Send the POST request to the API with the payload
+      response = RestClient.post(@url, @payload, @headers)
       decoded_response = JSON.parse(response.body)
-
-      @passed = decoded_response['stdout'].strip == value ? true : false
+      puts value
+      puts decoded_response['stdout'].strip
+      @passed = decoded_response['stdout'].strip == value.to_s ? true : false
       @stdout = decoded_response['stdout']
       @stderr = decoded_response['stderr']
 
