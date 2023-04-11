@@ -43,7 +43,8 @@
       <tr id="notice2">
         <td><%= link_to problem.title, problem , :id => 'probTitle'%></td>
         <th colspan="3"></th>
-        <td><%= link_to @map[problem.id], problem, :id => 'probTag' %></td>
+        <td><%= link_to @map[problem.id].to_s, problem, :id => 'probTag' %>
+        </td>
         <th colspan="3"></th>
         <td><%= link_to @map_level[problem.id], problem, :id => 'probDifficulty'  %></td>
       </tr>

@@ -16,13 +16,21 @@
   <%= f.text_field :title %>
   <%= f.label "Description" %>
   <%= f.text_area :body %>
-  <%= f.label "Tags" %>
-  <%= f.select :tags, options_from_collection_for_select(@tags, 'id', 'tag', f.object.tags), class: 'form-control col-md-7 col-xs-12', id: 'countries_select' %>
-  <%= f.label "Difficulty" %>
-  <%= f.select :level, options_from_collection_for_select(@difficulty_levels, 'id', 'level', f.object.level), class: 'form-control col-md-7 col-xs-12', id: 'countries_select' %>
+
+  <%#= f.label "Tags" %>
+  <%#= f.select :tags, options_from_collection_for_select(@tags, 'id', 'tag', f.object.tags), class: 'form-control col-md-7 col-xs-12', id: 'countries_select' %>
+  <%#= f.label "Difficulty" %>
+  <%#= f.select :level, options_from_collection_for_select(@difficulty_levels, 'id', 'level', f.object.level), class: 'form-control col-md-7 col-xs-12', id: 'countries_select' %>
   <%= f.label "Language restriction" %>
   <%= f.select :languages, options_from_collection_for_select(@languages, 'id', 'name', f.object.languages), class: 'form-control col-md-7 col-xs-12', id: 'countries_select' %>
 
+
+  <%= f.fields_for :problem_tags do |problem_tag| %>
+    <%= render "tag_fields", f: problem_tag %>
+  <% end %>
+  <div>
+    <%= link_to_add_association "Add Problem Tags", f, :problem_tags, class: "button" %>
+  </div>
 
   
   <%= f.fields_for :test_cases do |test_case| %>
