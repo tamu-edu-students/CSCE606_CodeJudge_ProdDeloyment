@@ -109,6 +109,15 @@ class ProblemsController < ApplicationController
 
   # GET /problems/new
   def new
+    # if flash[:warning].present?
+    #   @error_message = flash[:warning]
+    #   flash[:warning] = nil
+    # else
+    #   @error_message = nil
+    #   if @error_message.present?
+    #   end
+    # end
+
     @tags = Tag.all
     @problem = Problem.new
     @languages = Language.all
@@ -143,7 +152,12 @@ class ProblemsController < ApplicationController
       flash[:notice] = "The title cannot be nil."
       redirect_to new_problem_path
     else
-      respond_to do |format|
+      problem = Problem.find_by('lower(title) = ?', params[:problem][:title].downcase)
+      if problem.present?
+        flash[:warning] = "Problem already in list!"
+        redirect_to request.referer
+      end
+        respond_to do |format|
         if @problem.save
           # @problem_tag.problem_id = @problem.id
           # if @problem_tag.save!
