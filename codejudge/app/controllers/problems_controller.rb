@@ -18,17 +18,19 @@ class ProblemsController < ApplicationController
       # problem_tags = Tag.joins(:ProblemTag).where(problem_tags: { problem_id: prb.id }).pluck(:tag)
       # puts(problem_tags)
       results = ActiveRecord::Base.connection.execute("
-  SELECT tags.tag
-  FROM problem_tags
-  JOIN tags ON problem_tags.tag_id = tags.id
-  WHERE problem_tags.problem_id = #{prb.id}
-                                                      ")
-      results.each do |row|
-        puts "#{row['tag']}"
+        SELECT tags.tag
+        FROM problem_tags
+        JOIN tags ON problem_tags.tag_id = tags.id
+        WHERE problem_tags.problem_id = #{prb.id}")
+      tag_list = results.map { |row| row['tag'] }
+      if tag_list.length == 0
+        tag_list[0] = "No Tag Specified"
       end
+
       tag_name = Tag.where(id: ProblemTag.where(problem_id: prb.id).pick(:tag_id)).pick(:tag)
       level_name = DifficultyLevel.where(id: prb.level).pick(:level)
-      @map.store(prb.id, tag_name)
+      tag_list = tag_list.join(', ')
+      @map.store(prb.id, tag_list)
       @map_level.store(prb.id, level_name)
     end
     render :index
