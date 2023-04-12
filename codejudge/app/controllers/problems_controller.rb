@@ -13,7 +13,6 @@ class ProblemsController < ApplicationController
     @languages = Language.all
     @problems = Problem.all
     @map = Hash.new
-    @map_level = Hash.new
     for prb in @problems do
       # problem_tags = Tag.joins(:ProblemTag).where(problem_tags: { problem_id: prb.id }).pluck(:tag)
       # puts(problem_tags)
@@ -28,10 +27,8 @@ class ProblemsController < ApplicationController
       end
 
       tag_name = Tag.where(id: ProblemTag.where(problem_id: prb.id).pick(:tag_id)).pick(:tag)
-      level_name = DifficultyLevel.where(id: prb.level).pick(:level)
       tag_list = tag_list.join(', ')
-      @map.store(prb.id, tag_list)
-      @map_level.store(prb.id, level_name)
+      @map.store(prb.id, tag_list)\
     end
     render :index
   end
@@ -51,11 +48,7 @@ class ProblemsController < ApplicationController
   end
 
   def searchlevel
-    puts "level!!"
-    puts search_level_params
-    @problems = Problem.where(level: search_level_params)
-    @level_name = DifficultyLevel.where(id: search_level_params).pick(:level)
-    puts @level_name
+    @problems = Problem.where("CAST(difficulty AS INTEGER) BETWEEN ? AND ?", params[:min_difficulty].to_i, params[:max_difficulty].to_i)
   end
 
   def solution_upload

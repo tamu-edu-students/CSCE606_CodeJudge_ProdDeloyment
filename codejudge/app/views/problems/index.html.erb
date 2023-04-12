@@ -21,10 +21,13 @@
           <%= f.select :search_tag, options_from_collection_for_select(@tags, 'id', 'tag'), prompt: "Please Select", class: 'form-control col-md-7 col-xs-12', id: 'countries_select' %>
           <%= f.submit "Search" %>
         <% end %>
-        <h5> Search Problems with Difficulty</h5>
+        <h5>Search Problems with Difficulty</h5>
         <br>
         <%= form_with url: searchlevel_path, local: true, method: :get do |f| %>
-          <%= f.select :search_level, options_from_collection_for_select(@difficulty_levels, 'id', 'level'), prompt: "Please Select", class: 'form-control col-md-7 col-xs-12', id: 'countries_select' %>
+          <%= f.label :min_difficulty, "Minimum Difficulty:" %>
+          <%= f.text_field :min_difficulty, class: 'form-control col-md-2 col-xs-6', id: 'min_difficulty' %>
+          <%= f.label :max_difficulty, "Maximum Difficulty:" %>
+          <%= f.text_field :max_difficulty, class: 'form-control col-md-2 col-xs-6', id: 'max_difficulty' %>
           <%= f.submit "Search" %>
         <% end %>
       </th>
@@ -36,6 +39,7 @@
       <th colspan="3"></th>
       <th>Difficulty</th>
       <th colspan="3"></th>
+      <th>Language restriction</th>
     </tr>
     </thead>
     <tbody>
@@ -43,10 +47,11 @@
       <tr id="notice2">
         <td><%= link_to problem.title, problem , :id => 'probTitle'%></td>
         <th colspan="3"></th>
-        <td><%= link_to @map[problem.id].to_s, problem, :id => 'probTag' %>
-        </td>
+        <td><%= link_to @map[problem.id].to_s, problem, :id => 'probTag' %></td>
         <th colspan="3"></th>
-        <td><%= link_to @map_level[problem.id], problem, :id => 'probDifficulty'  %></td>
+        <td><%= link_to problem.difficulty, problem, :id => 'probDifficulty'  %></td>
+        <th colspan="3"></th>
+        <td><%= link_to Language.where(id: problem.languages).pick(:pretty_name), problem, :id => 'problanguage'  %></td>
       </tr>
     <% end %>
     </tbody>
