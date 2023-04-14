@@ -135,7 +135,6 @@ class ProblemsController < ApplicationController
     # @problem_tag = ProblemTag.new
     # @problem_level = DifficultyLevel.new
     # @problem_tag.tag_id = tag_params
-    # @problem_tag.difficulty_level_id = level_params
     authorize @problem
     puts "entering in create"
 
@@ -173,7 +172,6 @@ class ProblemsController < ApplicationController
     @problem_tag = ProblemTag.where(problem_id: id).first
     # puts @problem_tag.inspect
     @problem_tag.tag_id = tag_params
-    @problem_tag.difficulty_level_id = level_params
     @problem_tag.save
     if @problem.update(problem_params)
       redirect_to problems_path
@@ -207,16 +205,8 @@ class ProblemsController < ApplicationController
       params[:problem][:tags]
     end
 
-    def level_params
-      params[:problem][:level]
-    end
-
     def search_tag_params
       params[:search_tag]
-    end
-    def search_level_params
-      params[:search_level]
-      # puts search_level
     end
 
     def set_languages
