@@ -6,8 +6,8 @@
 
 <h1>Problems</h1>
 <% if policy(:problem).new? %>
-  <div class="col-12">
-    <%= link_to "New Problem", new_problem_path, :class => "button" %>
+  <div id ="new_problem_button-container" class="col-12">
+    <%= link_to "New Problem", new_problem_path, :class => "button", :id => "new_problem_button" %>
   </div>
 <% end %>
 <%#
