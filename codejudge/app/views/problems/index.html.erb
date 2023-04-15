@@ -10,50 +10,39 @@
     <%= link_to "New Problem", new_problem_path, :class => "button" %>
   </div>
 <% end %>
-<div class="table col-12">
-  <table>
-    <thead>
-    <tr>
-      <th>
-        <h5> Search Problems with Tags</h5>
-        <br>
-        <%= form_with url: searchtag_path, local: true, method: :get do |f| %>
-          <%= f.select :search_tag, options_from_collection_for_select(@tags, 'id', 'tag'), prompt: "Please Select", class: 'form-control col-md-7 col-xs-12', id: 'countries_select' %>
-          <%= f.submit "Search" %>
-        <% end %>
-        <h5>Search Problems with Difficulty</h5>
-        <br>
-        <%= form_with url: searchlevel_path, local: true, method: :get do |f| %>
-          <%= f.label :min_difficulty, "Minimum Difficulty:" %>
-          <%= f.text_field :min_difficulty, class: 'form-control col-md-2 col-xs-6', id: 'min_difficulty' %>
-          <%= f.label :max_difficulty, "Maximum Difficulty:" %>
-          <%= f.text_field :max_difficulty, class: 'form-control col-md-2 col-xs-6', id: 'max_difficulty' %>
-          <%= f.submit "Search" %>
-        <% end %>
-      </th>
-    </tr>
-    <tr>
-      <th>Title</th>
-      <th colspan="3"></th>
-      <th>Tags</th>
-      <th colspan="3"></th>
-      <th>Difficulty</th>
-      <th colspan="3"></th>
-      <th>Language restriction</th>
-    </tr>
-    </thead>
-    <tbody>
-    <% @problems.each do |problem| %>
-      <tr id="notice2">
-        <td><%= link_to problem.title, problem , :id => 'probTitle'%></td>
-        <th colspan="3"></th>
-        <td><%= link_to @map[problem.id].to_s, problem, :id => 'probTag' %></td>
-        <th colspan="3"></th>
-        <td><%= link_to problem.difficulty, problem, :id => 'probDifficulty'  %></td>
-        <th colspan="3"></th>
-        <td><%= link_to Language.where(id: problem.languages).pick(:pretty_name), problem, :id => 'problanguage'  %></td>
-      </tr>
-    <% end %>
-    </tbody>
-  </table>
-</div>
+<%#
+  Filterrific adds the `form_for_filterrific` view helper:
+  * adds dom id 'filterrific_filter'
+  * applies javascript behaviors:
+      * AJAX form submission on change
+      * AJAX spinner while AJAX request is being processed
+  * sets form_for options like :url, :method and input name prefix
+%>
+<%= form_for_filterrific @filterrific do |f| %>
+  <div>
+    <h4>Search Problems with Tags</h4>
+    <div style="display: flex;">
+      <%= f.collection_select :with_tag_id, Tag.all, :id, :tag, { include_blank: "Any" }, { class: 'filter-select', onchange: "this.form.submit();" }  %>
+      <%= link_to 'Reset filters', reset_filterrific_url, class: 'button ml-2', style: 'margin-left: 10px; height: 30px' %>
+    </div>
+  </div>
+  <%# <br> %
+  <%# add an automated spinner to your form when the list is refreshed %>
+  <%# <%= render_filterrific_spinner  %>
+<% end %>
+<%= render(
+  partial: 'problems/list',
+  locals: { problems: @problems}
+) %>
+
+<style>
+  .filter-select {
+    width: 200px; /* adjust the width as needed */
+    font-size: 14px; /* adjust the font size as needed */
+    padding: 5px;
+    /* margin: 2px */
+  }
+</style>
+
+
+

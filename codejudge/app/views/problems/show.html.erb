@@ -27,6 +27,7 @@
 <section id ="file-upload">
   <%= form_for(@attempt) do |f| %>
     <%= hidden_field_tag(:problem_id, @problem.id) %>
+    <%= f.hidden_field :language_list, value: @languages_list.join(",") %>
     <h3>Language Restriction: <%= @languages_list.join(", ") %> </h3>
     <div style="display: inline-block;">
       <%= f.label :sourcecode, "Upload attempt:" %>
