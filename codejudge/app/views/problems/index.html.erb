@@ -21,14 +21,21 @@
           <%= f.select :search_tag, options_from_collection_for_select(@tags, 'id', 'tag'), prompt: "Please Select", class: 'form-control col-md-7 col-xs-12', id: 'countries_select' %>
           <%= f.submit "Search" %>
         <% end %>
+        <br> 
         <h5>Search Problems with Difficulty</h5>
-        <br>
         <%= form_with url: searchlevel_path, local: true, method: :get do |f| %>
-          <%= f.label :min_difficulty, "Minimum Difficulty:" %>
-          <%= f.text_field :min_difficulty, class: 'form-control col-md-2 col-xs-6', id: 'min_difficulty' %>
-          <%= f.label :max_difficulty, "Maximum Difficulty:" %>
-          <%= f.text_field :max_difficulty, class: 'form-control col-md-2 col-xs-6', id: 'max_difficulty' %>
-          <%= f.submit "Search" %>
+          <div>
+            <div style="float:left;">
+              <%= f.label :min_difficulty, "Minimum Difficulty:" %>
+              <%= f.text_field :min_difficulty, class: 'form-control col-md-8 col-xs-6', id: 'min_difficulty' %>
+            </div>
+            <div style="float:left;">
+              <%= f.label :max_difficulty, "Maximum Difficulty:" %>
+              <%= f.text_field :max_difficulty, class: 'form-control col-md-8 col-xs-6', id: 'max_difficulty' %>
+            </div>
+            <div style="float:left;"><%= f.submit "Search" %></div>
+          </div>
+
         <% end %>
       </th>
     </tr>
