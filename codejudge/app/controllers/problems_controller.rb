@@ -7,13 +7,26 @@ class ProblemsController < ApplicationController
 
   # GET /problems or /problems.json
   def index
-    @difficulty_levels = DifficultyLevel.all
-    puts @difficulty_levels
-    @tags = Tag.all
-    @languages = Language.all
-    @problems = Problem.all
+    @filterrific = initialize_filterrific(
+      Problem,
+      params[:filterrific],
+      select_options: {
+        # sorted_by: Problem.options_for_sorted_by,
+        with_tag_id: Tag.options_for_select
+      },
+      persistence_id: "shared_key",
+      default_filter_params: {},
+      available_filters: [:with_tag_id],
+      sanitize_params: true,
+    ) || return
+    
+    puts "here"
     @map = Hash.new
     @map_level = Hash.new
+    @problems = @filterrific.find.page(params[:page])
+    # @products = @filterrific.find.paginate(page: params[:page], per_page: 10)
+
+    puts @problems
     for prb in @problems do
       # problem_tags = Tag.joins(:ProblemTag).where(problem_tags: { problem_id: prb.id }).pluck(:tag)
       # puts(problem_tags)
@@ -33,7 +46,14 @@ class ProblemsController < ApplicationController
       @map.store(prb.id, tag_list)
       @map_level.store(prb.id, level_name)
     end
-    render :index
+    
+    respond_to do |format|
+      format.html
+      format.js
+    end
+    # render :index
+    # puts "end"
+
   end
 
   # GET /problems/1 or /problems/1.json
@@ -229,4 +249,4 @@ class ProblemsController < ApplicationController
     def set_languages
       @languages = ['Bash', 'C++', 'Python']
     end
-end
+  end

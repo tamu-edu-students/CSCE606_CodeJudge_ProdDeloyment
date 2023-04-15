@@ -8,4 +8,17 @@ class Problem < ApplicationRecord
   def visible_test_cases(problem, role)
     role == :student.to_s ? problem.test_cases.where(example: true) : problem.test_cases
   end
+
+  filterrific(
+    default_filter_params: { with_tag_id: nil },
+    available_filters: [
+      :with_tag_id
+    ]
+  )
+  scope :with_tag_id, ->(tag_id) {
+    # Filters students with any of the given country_ids
+    # where(tags: tag_id )
+    joins(:problem_tags).where(problem_tags: { tag_id: tag_id })
+  }
+
 end
