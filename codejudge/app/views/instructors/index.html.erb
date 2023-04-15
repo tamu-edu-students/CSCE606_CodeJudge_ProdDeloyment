@@ -1,14 +1,14 @@
 <p id="notice"><%= notice %></p>
 
 <h1>Welcome Instructor!</h1>
-<div class="table col-12">
+<div id="classes_list_table" class="table col-12">
   <table>
     <thead>
       <tr>
         <th><h1 class="col-12">Classes</h1></th>
         <th><h3 class="col-12">Classcode</h3></th>
         
-        <th><%= link_to "New Class", new_group_path, :class => "button" %></th>
+        <th id = "new_class_button"><%= link_to "New Class", new_group_path, :class => "button" %></th>
       </tr>
     </thead>
     <tbody>
