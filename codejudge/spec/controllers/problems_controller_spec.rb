@@ -5,23 +5,39 @@ RSpec.describe ProblemsController, type: :controller do
     if Problem.where(:title => "Array Sum").empty?
       Problem.create(:title => "Array Sum",
         :body => "this is the array sum problem",
+        :languages => Language.find_by(pretty_name: 'C').id,
         :tags => 1,
-        :languages => Language.find_by(pretty_name: 'C').id)
+        :difficulty => 3)
     end
-    if ProblemTag.where(problem_id: Problem.find_by(:title => "Array Sum").id).empty?
+    if ProblemTag.where(problem_id: Problem.find_by(:title => "Array Sum").id, tag_id: 1).empty?
       ProblemTag.create(:problem_id => Problem.find_by(title: "Array Sum").id,
         :tag_id => 1)
     end
+    if ProblemTag.where(problem_id: Problem.find_by(:title => "Array Sum").id, tag_id: 3).empty?
+      ProblemTag.create(:problem_id => Problem.find_by(title: "Array Sum").id,
+        :tag_id => 3)
+    end
+    if ProblemTag.where(problem_id: Problem.find_by(:title => "Array Sum").id, tag_id: 7).empty?
+      ProblemTag.create(:problem_id => Problem.find_by(title: "Array Sum").id,
+        :tag_id => 7)
+    end
+
     if Problem.where(:title => "Dynamic Arrays").empty?
       Problem.create(:title => "Dynamic Arrays",
         :body => "this is the dynamic arrays problem",
         :tags => 2,
-        :languages => Language.find_by(pretty_name: 'Assembly').id)
+        :languages => Language.find_by(pretty_name: 'Assembly').id,
+        :difficulty => 7)
     end
-    if ProblemTag.where(problem_id: Problem.find_by(:title => "Dynamic Arrays").id).empty?
+    if ProblemTag.where(problem_id: Problem.find_by(:title => "Dynamic Arrays").id, tag_id: 4).empty?
       ProblemTag.create(:problem_id => Problem.find_by(title: "Dynamic Arrays").id,
-        :tag_id => 2)
+        :tag_id => 4)
     end
+    if ProblemTag.where(problem_id: Problem.find_by(:title => "Dynamic Arrays").id, tag_id: 7).empty?
+      ProblemTag.create(:problem_id => Problem.find_by(title: "Dynamic Arrays").id,
+        :tag_id => 7)
+    end
+
     if User.where(:username => "instructor").empty?
       User.create(:username => "instructor",
         :email => "instructor@xyz.com")
@@ -50,7 +66,6 @@ RSpec.describe ProblemsController, type: :controller do
       expect(assigns(:problems)).to include(problem)
       expect(problem.title).to eq("Array Sum")
       expect(problem.body).to eq("this is the array sum problem")
-      expect(problem.tags).to eq("1")
       expect(problem.languages).to eq("4")
     end
   end
@@ -93,7 +108,6 @@ RSpec.describe ProblemsController, type: :controller do
       expect(ProblemTag.where(problem_id: problem.id)).to exist
       new_languages = Language.find_by(pretty_name: 'COBOL').id
       allow(controller).to receive(:tag_params).and_return(problem.tags)
-      allow(controller).to receive(:level_params).and_return(problem.level)
       put :update, params: { id: problem.id, problem: { languages: new_languages } }
       expect(Problem.find(problem.id).languages).to eq(new_languages.to_s)
     end
@@ -102,9 +116,8 @@ RSpec.describe ProblemsController, type: :controller do
       expect(ProblemTag.where(problem_id: problem.id)).to exist
       new_tags = 7
       allow(controller).to receive(:tag_params).and_return(new_tags)
-      allow(controller).to receive(:level_params).and_return(problem.level)
       put :update, params: { id: problem.id, problem: { tags: new_tags } }
-      expect(Problem.find(problem.id).tags).to eq(new_tags.to_s)
+      expect(Problem.find(problem.id).tags).to eq(new_tags)
     end
   end
 
@@ -115,6 +128,23 @@ RSpec.describe ProblemsController, type: :controller do
       get :index, params: {}
       expect(assigns(:problems).count).to eq(3)
       expect(Problem.where(title: "Array Sum")).not_to exist
+    end
+  end
+
+  describe 'Multiple problem tags' do
+    it 'check the problem tags for ech problem on the main page' do
+      get :index, params: {}
+      tags_map = assigns(:map)
+      expect(tags_map[Problem.find_by(title: 'Array Sum').id].to_s).to eq "Array, Backtracking, Graph"
+      expect(tags_map[Problem.find_by(title: 'Dynamic Arrays').id].to_s).to eq "Binary Search, Graph"
+    end
+  end
+
+  describe 'problem rating filter' do
+    it 'apply a min, max filter and check if appropriate problems are retrieved' do
+      get :searchlevel, params: {min_difficulty: 5, max_difficulty: 9}
+      expect(assigns(:problems)).not_to include(Problem.find_by(title: 'Array Sum'))
+      expect(assigns(:problems)).to include(Problem.find_by(title: 'Dynamic Arrays'))
     end
   end
 

@@ -24,9 +24,7 @@ class ProblemsController < ApplicationController
     @map = Hash.new
     @map_level = Hash.new
     @problems = @filterrific.find.page(params[:page])
-    # @products = @filterrific.find.paginate(page: params[:page], per_page: 10)
 
-    puts @problems
     for prb in @problems do
       # problem_tags = Tag.joins(:ProblemTag).where(problem_tags: { problem_id: prb.id }).pluck(:tag)
       # puts(problem_tags)
@@ -41,10 +39,8 @@ class ProblemsController < ApplicationController
       end
 
       tag_name = Tag.where(id: ProblemTag.where(problem_id: prb.id).pick(:tag_id)).pick(:tag)
-      level_name = DifficultyLevel.where(id: prb.level).pick(:level)
       tag_list = tag_list.join(', ')
-      @map.store(prb.id, tag_list)
-      @map_level.store(prb.id, level_name)
+      @map.store(prb.id, tag_list)\
     end
     
     respond_to do |format|
@@ -71,11 +67,7 @@ class ProblemsController < ApplicationController
   end
 
   def searchlevel
-    puts "level!!"
-    puts search_level_params
-    @problems = Problem.where(level: search_level_params)
-    @level_name = DifficultyLevel.where(id: search_level_params).pick(:level)
-    puts @level_name
+    @problems = Problem.where("CAST(difficulty AS INTEGER) BETWEEN ? AND ?", params[:min_difficulty].to_i, params[:max_difficulty].to_i)
   end
 
   def solution_upload
@@ -162,7 +154,6 @@ class ProblemsController < ApplicationController
     # @problem_tag = ProblemTag.new
     # @problem_level = DifficultyLevel.new
     # @problem_tag.tag_id = tag_params
-    # @problem_tag.difficulty_level_id = level_params
     authorize @problem
     puts "entering in create"
 
@@ -200,7 +191,6 @@ class ProblemsController < ApplicationController
     @problem_tag = ProblemTag.where(problem_id: id).first
     # puts @problem_tag.inspect
     @problem_tag.tag_id = tag_params
-    @problem_tag.difficulty_level_id = level_params
     @problem_tag.save
     if @problem.update(problem_params)
       redirect_to problems_path
@@ -234,16 +224,8 @@ class ProblemsController < ApplicationController
       params[:problem][:tags]
     end
 
-    def level_params
-      params[:problem][:level]
-    end
-
     def search_tag_params
       params[:search_tag]
-    end
-    def search_level_params
-      params[:search_level]
-      # puts search_level
     end
 
     def set_languages

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_04_10_005636) do
+ActiveRecord::Schema[7.0].define(version: 2023_04_14_125213) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "adminpack"
   enable_extension "plpgsql"
@@ -86,7 +86,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_10_005636) do
     t.bigint "tag_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "difficulty_level_id"
   end
 
   create_table "problems", force: :cascade do |t|
@@ -96,9 +95,9 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_10_005636) do
     t.datetime "updated_at", null: false
     t.bigint "author_id"
     t.text "instructor_solution"
-    t.string "tags"
     t.string "languages"
-    t.string "level"
+    t.integer "difficulty", default: 0
+    t.integer "tags"
     t.index ["author_id"], name: "index_problems_on_author_id"
   end
 
@@ -162,7 +161,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_10_005636) do
   add_foreign_key "attempts", "users"
   add_foreign_key "problem_groups", "groups"
   add_foreign_key "problem_groups", "problems"
-  add_foreign_key "problem_tags", "difficulty_levels"
   add_foreign_key "problem_tags", "problems"
   add_foreign_key "problem_tags", "tags"
   add_foreign_key "problems", "users", column: "author_id"
