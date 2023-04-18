@@ -12,13 +12,19 @@ class Problem < ApplicationRecord
   filterrific(
     default_filter_params: { with_tag_id: nil },
     available_filters: [
-      :with_tag_id
+      :with_tag_id,
+      :with_difficulty_id
     ]
   )
   scope :with_tag_id, ->(tag_id) {
     # Filters students with any of the given country_ids
     # where(tags: tag_id )
     joins(:problem_tags).where(problem_tags: { tag_id: tag_id })
+  }
+  scope :with_difficulty_id, ->(difficulty_id) {
+    # Filters students with any of the given country_ids
+    # where(tags: tag_id )
+    where(difficulty: difficulty_id)
   }
 
 end

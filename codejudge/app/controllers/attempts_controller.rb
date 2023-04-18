@@ -34,63 +34,62 @@ class AttemptsController < ApplicationController
 
   # POST /attempts or /attempts.json
 # This function pulls the test cases for the problem and sends it off to Sidekiq
-def create
-  puts "here2"
-  @attempt = Attempt.new
-  language = Language.find_by(pretty_name: params[:attempt][:language_list])
-  # puts language.name
+  def create
+    puts "here2"
+    @attempt = Attempt.new
+    language = Language.find_by(pretty_name: params[:attempt][:language_list])
+    # puts language.name
 
-  if language
-    # puts "hi"
-    language_id = language.id
+    if language
+      # puts "hi"
+      language_id = language.id
 
-    @attempt.code = File.read(params[:attempt][:sourcecode])
-    # puts @attempt.code
-    # puts "hi"
-    @attempt.user_id = session[:user_id]
-    @attempt.problem_id = params[:problem_id]
-    @attempt.language_id = language_id
+      @attempt.code = File.read(params[:attempt][:sourcecode])
+      # puts @attempt.code
+      # puts "hi"
+      @attempt.user_id = session[:user_id]
+      @attempt.problem_id = params[:problem_id]
+      @attempt.language_id = language_id
 
-    @testcases_query = TestCase.left_outer_joins(:problem).where(problem_id: @attempt.problem_id).map{ |r| [r.input, r.output]}
-    puts @testcases_query
+      @testcases_query = TestCase.left_outer_joins(:problem).where(problem_id: @attempt.problem_id).map{ |r| [r.input, r.output]}
+      puts @testcases_query
 
-    # @testcases = {}
-    respond_to do |format|
-      if @attempt.save
-        format.html { redirect_to attempt_url(@attempt), notice: "Attempt was successfully created." }
-        format.json { render :show, status: :created, location: @attempt }
+      # @testcases = {}
+      respond_to do |format|
+        if @attempt.save
+          format.html { redirect_to attempt_url(@attempt), notice: "Attempt was successfully created." }
+          format.json { render :show, status: :created, location: @attempt }
 
-        api_timeout = 1
-        puts "testCase"
-        @testcases_query.each_with_index do |item, index|
-          puts "testCase2"
-          timeout = index*api_timeout
-          results = SubmitCodeJob.perform(item[0], item[1], language.name, @attempt.code, @testcases_query.index(item), current_user.id, @attempt.id)
-          puts "testCaseEnd"
-          puts results
-          if results[:passed]
-            format.html { redirect_to attempt_url(@attempt), notice: "Correct answer" }
-            format.json { render :show, status: :created, location: @attempt }
-          else
-            format.html { render :new, status: :unprocessable_entity }
-            format.json { render json: results[:stderr], status: :unprocessable_entity }
+          api_timeout = 1
+          puts "testCase"
+          @testcases_query.each_with_index do |item, index|
+            puts "testCase2"
+            timeout = index*api_timeout
+            results = SubmitCodeJob.perform(item[0], item[1], language.name, @attempt.code, @testcases_query.index(item), current_user.id, @attempt.id)
+            puts "testCaseEnd"
+            puts results
+            if results[:passed]
+              format.html { redirect_to attempt_url(@attempt), notice: "Correct answer" }
+              format.json { render :show, status: :created, location: @attempt }
+            else
+              format.html { render :new, status: :unprocessable_entity }
+              format.json { render json: results[:stderr], status: :unprocessable_entity }
+            end
           end
+        else
+          format.html { render :new, status: :unprocessable_entity }
+          format.json { render json: @attempt.errors, status: :unprocessable_entity }
         end
-      else
+      end
+    else
+      puts "here"
+      # handle the case when the language is nil
+      respond_to do |format|
         format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @attempt.errors, status: :unprocessable_entity }
+        format.json { render json: { error: "Language not found" }, status: :unprocessable_entity }
       end
     end
-  else
-    puts "here"
-    # handle the case when the language is nil
-    respond_to do |format|
-      format.html { render :new, status: :unprocessable_entity }
-      format.json { render json: { error: "Language not found" }, status: :unprocessable_entity }
-    end
   end
-end
-
 
 
   # PATCH/PUT /attempts/1 or /attempts/1.json
