@@ -12,10 +12,10 @@
 
 <section id="test-cases" class="container">
   <h3 class="col-12">Testcases</h3>
-    <div class="row">
+  <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-4">
     <% if @visible_test_cases.any? %>
       <% @visible_test_cases.each do |test_case| %>
-        <div class="col-12 col-md-4 col-lg-3 col-xl-2">
+        <div class="col">
           <%= render "partials/test_case_card_edit", test_case: test_case %>
         </div>
       <% end %>
@@ -24,9 +24,11 @@
     <% end %>
   </div>
 </section>
+
 <section id ="file-upload">
   <%= form_for(@attempt) do |f| %>
     <%= hidden_field_tag(:problem_id, @problem.id) %>
+    <%= f.hidden_field :language_list, value: @languages_list.join(",") %>
     <h3>Language Restriction: <%= @languages_list.join(", ") %> </h3>
     <div style="display: inline-block;">
       <%= f.label :sourcecode, "Upload attempt:" %>

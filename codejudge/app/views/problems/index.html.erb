@@ -1,15 +1,39 @@
 <p id="notice"><%= notice %></p>
 
-<% if policy(:problem).new? %>
-  <h1>Welcome Instructor!</h1>
-<% end %>
+<div class="d-flex justify-content-center w-100">
+  <% if policy(:problem).new? %>
+    <h1>Welcome Instructor!</h1>
+  <% end %>
+</div>
+
 
 <h1>Problems</h1>
-<% if policy(:problem).new? %>
-  <div class="col-12">
-    <%= link_to "New Problem", new_problem_path, :class => "button" %>
+
+<%= form_for_filterrific @filterrific do |f| %>
+  <div class="row align-items-center">
+    <div class="col-md-2 mb-3">
+      <h4>Tags</h4>
+      <%= f.collection_select :with_tag_id, Tag.all, :id, :tag, { include_blank: "Any" }, { class: 'form-select filter-select', onchange: "this.form.submit();" }  %>
+    </div>
+    <div class="col-md-6 mb-3">
+      <h4>Difficulty</h4>
+      <%= f.collection_select :with_difficulty_id, DifficultyLevel.all, :id, :level, { include_blank: "Any" }, { class: 'form-select filter-select', onchange: "this.form.submit();" }  %>
+    </div>
+    <div class="col-md-2 mb-3">
+      <%= link_to 'Reset filters', reset_filterrific_url, class: 'button', style: 'margin-left: 10px; margin-top:50px; height: 30px' %>
+    </div>
+    <% if policy(:problem).new? %>
+      <div class="col-md-2 mb-3">
+        <%= link_to "New Problem", new_problem_path, :class => "button" , style: 'margin-left: 10px; margin-top:50px; height: 30px' %>
+      </div>
+    <% end %>
   </div>
 <% end %>
+
+
+
+
+
 <div class="table col-12">
   <table>
     <thead>
@@ -64,3 +88,20 @@
     </tbody>
   </table>
 </div>
+
+
+
+
+<%= render(
+  partial: 'problems/list',
+  locals: { problems: @problems}
+) %>
+
+<style>
+  .filter-select {
+    width: 200px; /* adjust the width as needed */
+    font-size: 14px; /* adjust the font size as needed */
+    padding: 5px;
+    /* margin: 2px */
+  }
+</style>

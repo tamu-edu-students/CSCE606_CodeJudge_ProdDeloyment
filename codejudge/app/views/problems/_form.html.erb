@@ -19,8 +19,8 @@
 
   <%#= f.label "Tags" %>
   <%#= f.select :tags, options_from_collection_for_select(@tags, 'id', 'tag', f.object.tags), class: 'form-control col-md-7 col-xs-12', id: 'countries_select' %>
-  <%#= f.label "Difficulty" %>
-  <%#= f.select :level, options_from_collection_for_select(@difficulty_levels, 'id', 'level', f.object.level), class: 'form-control col-md-7 col-xs-12', id: 'countries_select' %>
+  <%= f.label "Difficulty" %>
+  <%= f.select :difficulty, options_from_collection_for_select(@difficulty_levels, 'id', 'level', f.object.difficulty), class: 'form-control col-md-7 col-xs-12', id: 'countries_select' %>
   <%= f.label "Language restriction" %>
   <%= f.select :languages, options_from_collection_for_select(@languages, 'id', 'name', f.object.languages), class: 'form-control col-md-7 col-xs-12', id: 'countries_select' %>
 
@@ -30,15 +30,13 @@
   <% end %>
   <div>
     <%= link_to_add_association "Add Problem Tags", f, :problem_tags, class: "button" %>
+    <%= link_to_add_association "Add Test Case", f, :test_cases, class: "button" %>
   </div>
 
-  
+
   <%= f.fields_for :test_cases do |test_case| %>
     <%= render "test_case_fields", f: test_case %>
   <% end %>
-  <div>
-    <%= link_to_add_association "Add Test Case", f, :test_cases, class: "button" %>
-  </div>
   <div>
     <%= f.submit :class => "button button--submit"%>
   </div>
