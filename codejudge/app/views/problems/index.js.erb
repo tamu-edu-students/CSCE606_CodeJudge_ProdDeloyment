@@ -1,5 +1,2 @@
-<%# app/views/students/index.js.erb %>
-<% js = escape_javascript(
-  render(partial: 'problems/list', locals: { problems: @problems })
-) %>
-$("#filterrific_results").html("<%= js %>");
+$('#problems').html('<%= j render("problems_list") %>');
+$('.pagination').html('<%= j will_paginate @problems');
