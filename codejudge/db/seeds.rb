@@ -8,6 +8,7 @@
 #
 # #User.create(username: "admin", password: "admin", password_confirmation: "admin", firstname: "admin", lastname: "admin", email: "admin@email.com", registration_time: DateTime.now, user_role: 0)
 #
+
 # require 'faker'
 #
 # #TEST ROLES
@@ -107,6 +108,37 @@
 #     name: lang[0],
 #     extension: lang[1],
 #     pretty_name: lang[2]
+
+#   movies = Movie.create([{ name: "Star Wars" }, { name: "Lord of the Rings" }])
+#   Character.create(name: "Luke", movie: movies.first)
+
+#User.create(username: "admin", password: "admin", password_confirmation: "admin", firstname: "admin", lastname: "admin", email: "admin@email.com", registration_time: DateTime.now, user_role: 0)
+
+require 'faker'
+
+#TEST ROLES
+role_admin = Role.create(name: "admin")
+role_instructor = Role.create(name: "instructor")
+role_ta = Role.create(name: "ta")
+role_student = Role.create(name: "student")
+
+#TEST USERS
+admin = User.create!(username: "test", password: "password", password_confirmation: "password", firstname: "admin", lastname: "admin", email: "admin@example.com")
+admin.assignments.create!(role: role_admin)
+instructor = User.create!(username: "instructor", password: "password", password_confirmation: "password", firstname: "test", lastname: "instructor", email: "instructor@example.com")
+instructor.assignments.create!(role: role_instructor)
+ta = User.create!(username: "teaching_asst", password: "password", password_confirmation: "password", firstname: "test", lastname: "ta", email: "ta@example.com")
+ta.assignments.create!(role: role_ta)
+student = User.create!(username: "student", password: "password", password_confirmation: "password", firstname: "test", lastname: "student", email: "student@example.com")
+
+
+# (1..50).each do |id|
+#   user = User.create(
+#     username: Faker::Creature::Animal.unique.name,
+#     password: Faker::Alphanumeric.alphanumeric(number: 10),
+#     firstname: Faker::Name.first_name,
+#     lastname: Faker::Name.last_name,
+#     email: Faker::Internet.email
 #   )
 # end
 #
@@ -150,3 +182,73 @@ new_difficulty_levels.each do |level|
     description: level[1]
   )
 end
+
+
+new_tags = [
+    ["Array","Array"],
+    ["BFS", "BFS"],
+    ["Backtracking", "Backtracking"],
+    ["Binary Search","Binary Search"],
+    ["DFS","DFS"],
+    ["Dynamic Programming","Dynamic Programming"],
+    ["Graph","Graph"],
+    ["Greedy","Greedy"],
+    ["Hash Table","Hash Tables"],
+    ["Linked List","Linked Lists"],
+    ["Math","Maths"],
+    ["Matrix","Matrices"],
+    ["Other","Others"],
+    ["Queue","Queues"],
+    ["Recursion","Recursions"],
+    ["Sorting","Sortings"],
+    ["Stack","Stacks"],
+    ["String","Strings"],
+    ["Tree","Trees"],
+    ["Two Pointers","Two Pointers"]
+]
+new_tags.each do |new_tag|
+  Tag.create(
+    tag: new_tag[0],
+    description: new_tag[1]
+  )
+end
+
+
+# Test Classes
+ruby_class = Group.create!(
+  author_id: "a_1",
+  title: "Ruby Class",
+  description: "This class is for Ruby Course"
+  classcode: "xyzasd876"
+)
+
+python_class = Group.create!(
+  author_id: "a_2",
+  title: "Python Class",
+  description: "This class is for Python Course"
+  classcode: "yzasd87"
+)
+
+
+java_class = Group.create!(
+  author_id: "a_3",
+  title: "Java Class",
+  description: "This class is for Java Course"
+  classcode: "zasd87"
+)
+
+cpp_class = Group.create!(
+  author_id: "a_4",
+  title: "cpp Class",
+  description: "This class is for cpp Course"
+  classcode: "asd87"
+)
+
+
+c_class = Group.create!(
+  author_id: "a_5",
+  title: "c Class",
+  description: "This class is for c Course"
+  classcode: "sd87"
+)
+
