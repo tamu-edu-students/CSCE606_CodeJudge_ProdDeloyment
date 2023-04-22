@@ -12,10 +12,10 @@
 
 <section id="test-cases" class="container">
   <h3 class="col-12">Testcases</h3>
-    <div class="row">
+  <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-4">
     <% if @visible_test_cases.any? %>
       <% @visible_test_cases.each do |test_case| %>
-        <div class="col-12 col-md-4 col-lg-3 col-xl-2">
+        <div class="col">
           <%= render "partials/test_case_card_edit", test_case: test_case %>
         </div>
       <% end %>
@@ -24,13 +24,17 @@
     <% end %>
   </div>
 </section>
+
 <section id ="file-upload">
   <%= form_for(@attempt) do |f| %>
     <%= hidden_field_tag(:problem_id, @problem.id) %>
-<%= f.select :language, @languages_list, { prompt: "Select Language" }, required: true %>
-    <%= f.label :sourcecode, "File upload:" %>
-    <%= f.file_field :sourcecode %>
-    <%= f.submit "Submit Code", :class => "button"%>
+    <%= f.hidden_field :language_list, value: @languages_list.join(",") %>
+    <h3>Language Restriction: <%= @languages_list.join(", ") %> </h3>
+    <div style="display: inline-block;">
+      <%= f.label :sourcecode, "Upload attempt:" %>
+      <%= f.file_field :sourcecode %>
+    </div>
+    <%= f.submit "Submit attempt", class: "button", style: "display: inline-block; vertical-align: top;" %>
   <% end %>
 </section>
 <% if @problem.instructor_solution %>
@@ -39,13 +43,13 @@
   <%end%>
 <%end%>
 <% if current_user.role? :instructor #&& @problem.author_id == cookies.signed[:user_id]#%>
-  <section id ="solution-upload">
-    <%= form_with(:url => solution_upload_form_path_url) do |f| %>
-      <%= hidden_field_tag(:problem_id, @problem.id) %>
-      <%= f.select :language, @languages_list, :prompt => "Select Solution Code Language" %>
-      <%= f.label :solution_sourcecode, "Solution File upload:" %>
+  <section id ="solution-upload"><%= form_with(url: solution_upload_form_path_url) do |f| %>
+    <%= hidden_field_tag(:problem_id, @problem.id) %>
+    <div style="display: inline-block;">
+      <%= f.label :solution_sourcecode, "Upload solution:" %>
       <%= f.file_field :solution_sourcecode %>
-      <%= f.submit submit_button_modal(@problem), :class => "button"%>
+    </div>
+    <%= f.submit "Submit solution", class: "button", style: "display: inline-block; vertical-align: top;" %>
     <% end %>
   </section>
 <% end %>

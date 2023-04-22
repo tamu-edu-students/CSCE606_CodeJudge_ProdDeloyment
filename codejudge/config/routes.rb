@@ -1,5 +1,6 @@
 
 Rails.application.routes.draw do
+  get 'rating/index'
   post '/addition/form', to: 'student_groups#addition_from'
   post '/add_problem/form', to: 'problem_groups#add_problem_form'
   get '/remove_student_group', to: 'student_groups#remove_student_group'
@@ -7,6 +8,8 @@ Rails.application.routes.draw do
   post '/solution_upload_form_path', to: 'problems#solution_upload'
   post '/problems/:id', to: 'problems#update'
   get '/searchtag', to: 'problems#searchtag'
+  get '/searchlevel', to: 'problems#searchlevel'
+  get '/rating', to: 'rating#index', as: 'rating'
 
 
   resources :approved_requests

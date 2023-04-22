@@ -2,7 +2,8 @@ class SubmitCodeJob
   include Sidekiq::Job
   sidekiq_options retry: 0
 
-  def perform(*args)
+  def self.perform(*args)
+    puts "codeJob"
     input = args[0]
     output = args[1]
     @testcase = {}
@@ -26,6 +27,7 @@ class SubmitCodeJob
         finished_at: Time.current.strftime("%m/%d/%Y %r")
       }
     )
+    results
 
   end
 end

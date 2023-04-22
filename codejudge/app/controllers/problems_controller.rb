@@ -7,30 +7,66 @@ class ProblemsController < ApplicationController
 
   # GET /problems or /problems.json
   def index
-    @tags = Tag.all
-    @languages = Language.all
-    @problems = Problem.all
+    @filterrific = initialize_filterrific(
+      Problem,
+      params[:filterrific],
+      select_options: {
+        # sorted_by: Problem.options_for_sorted_by,
+        with_tag_id: Tag.options_for_select,
+        with_difficulty_id: DifficultyLevel.options_for_select
+      },
+      persistence_id: "shared_key",
+      default_filter_params: {},
+      available_filters: [:with_tag_id, :with_difficulty_id],
+      sanitize_params: true,
+    ) || return
+    
+    puts "here"
     @map = Hash.new
+    @problems = @filterrific.find.page(params[:page])
+
     for prb in @problems do
-      tag_name = Tag.where(id: prb.tags).pick(:tag)
-      puts tag_name
-      @map.store(prb.id, tag_name)
+      # problem_tags = Tag.joins(:ProblemTag).where(problem_tags: { problem_id: prb.id }).pluck(:tag)
+      # puts(problem_tags)
+      results = ActiveRecord::Base.connection.execute("
+        SELECT tags.tag
+        FROM problem_tags
+        JOIN tags ON problem_tags.tag_id = tags.id
+        WHERE problem_tags.problem_id = #{prb.id}")
+      tag_list = results.map { |row| row['tag'] }
+      if tag_list.length == 0
+        tag_list[0] = "No Tag Specified"
+      end
+
+      tag_name = Tag.where(id: ProblemTag.where(problem_id: prb.id).pick(:tag_id)).pick(:tag)
+      level_name = DifficultyLevel.where(id: prb.difficulty).pick(:level)
+      tag_list = tag_list.join(', ')
+      @map.store(prb.id, tag_list)
     end
-    render :index
+    
+    respond_to do |format|
+      format.html
+      format.js
+    end
+    # render :index
+    # puts "end"
+
   end
 
   # GET /problems/1 or /problems/1.json
   def show
-    @languages_list = Language.pluck(:pretty_name)
+    @languages_list = Language.where(id: @problem.languages).pluck(:pretty_name)
     @attempt = Attempt.new
     @visible_test_cases = @problem.visible_test_cases @problem, current_user.role
     @no_test_cases_prompt = current_user.role?(:student) ? "No example Test Cases provided." : "No Test Cases were specified for that Problem."
   end
 
-  def searchtag
-    @problems = Problem.where(tags: search_tag_params)
-    @tag_name = Tag.where(id: search_tag_params).pick(:tag)
-  end
+  # def searchtag
+  #   # puts search_tag_params
+  #   @problems = Problem.where(tags: search_tag_params)
+  #   @tag_name = Tag.where(id: search_tag_params).pick(:tag)
+  # end
+
 
   def solution_upload
     @problem = Problem.where(id: params[:problem_id])
@@ -42,13 +78,13 @@ class ProblemsController < ApplicationController
     @language_id = language_id
     @testcases_query = TestCase.left_outer_joins(:problem).where(problem_id: @problem.first.id).map{ |r| [r.input, r.output]}
     api_timeout = 1
-    passed = true;
+    passed = true
     @testcases_query.each_with_index do |item, index|
       timeout = index*api_timeout
       @results = perform_instructor_solution(item[0], item[1], language, @solution_code, @testcases_query.index(item), current_user.id, 46)
       puts @results.inspect
       if !@results[:passed]
-        passed = false;
+        passed = false
       end
     end
     if passed
@@ -83,9 +119,19 @@ class ProblemsController < ApplicationController
 
   # GET /problems/new
   def new
+    # if flash[:warning].present?
+    #   @error_message = flash[:warning]
+    #   flash[:warning] = nil
+    # else
+    #   @error_message = nil
+    #   if @error_message.present?
+    #   end
+    # end
+    puts "here"
     @tags = Tag.all
     @problem = Problem.new
     @languages = Language.all
+    @difficulty_levels = DifficultyLevel.all
     authorize @problem
     # @test_cases = @problem.test_cases
   end
@@ -95,30 +141,42 @@ class ProblemsController < ApplicationController
     @problem = Problem.find params[:id]
     @tags = Tag.all
     @languages = Language.all
+    @difficulty_levels = DifficultyLevel.all
     authorize :problem
-    @tags = Tag.all
+    # @tags = Tag.all
   end
 
   # POST /problems or /problems.json
   def create
     @problem = Problem.new(problem_params)
-    @problem_tag = ProblemTag.new
-    @problem_tag.tag_id = tag_params
+    # @problem_tag = ProblemTag.new
+    # @problem_level = DifficultyLevel.new
+    # @problem_tag.tag_id = tag_params
     authorize @problem
     puts "entering in create"
 
     puts "Reaced create #################################"
 
-    respond_to do |format|
-      if @problem.save
-        @problem_tag.problem_id = @problem.id
-        if @problem_tag.save!
-          format.html { redirect_to problem_url(@problem), notice: "Problem was successfully created." }
-          format.json { render :show, status: :created, location: @problem }
+    if @problem.title.empty?
+      flash[:notice] = "The title cannot be nil."
+      redirect_to new_problem_path
+    else
+      problem = Problem.find_by('lower(title) = ?', params[:problem][:title].downcase)
+      if problem.present?
+        flash[:warning] = "Problem already in list!"
+        redirect_to request.referer
+      end
+        respond_to do |format|
+        if @problem.save
+          # @problem_tag.problem_id = @problem.id
+          # if @problem_tag.save!
+            format.html { redirect_to problem_url+(@problem), notice: "Problem was successfully created." }
+            format.json { render :show, status: :created, location: @problem }
+          # end
+        else
+          format.html { render :new, status: :unprocessable_entity }
+          format.json { render json: @problem.errors, status: :unprocessable_entity }
         end
-      else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @problem.errors, status: :unprocessable_entity }
       end
     end
   end
@@ -129,8 +187,10 @@ class ProblemsController < ApplicationController
     @tags = Tag.all
     id = @problem.id
     @problem_tag = ProblemTag.where(problem_id: id).first
-    puts @problem_tag.inspect
+
+    @problem_tag.difficulty_level_id = level_params
     @problem_tag.tag_id = tag_params
+
     @problem_tag.save
     if @problem.update(problem_params)
       redirect_to problems_path
@@ -157,7 +217,7 @@ class ProblemsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def problem_params
-      params.require(:problem).permit(:title, :body, :tags, :languages, test_cases_attributes: [:id, :input, :output, :example, :_destroy])
+      params.require(:problem).permit(:title, :body, :difficulty, :languages, problem_tags_attributes: [:id, :tag_id, :_destroy], test_cases_attributes: [:id, :input, :output, :example, :_destroy], )
     end
 
     def tag_params
@@ -171,4 +231,4 @@ class ProblemsController < ApplicationController
     def set_languages
       @languages = ['Bash', 'C++', 'Python']
     end
-end
+  end
