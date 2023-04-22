@@ -22,7 +22,7 @@ class ProblemsController < ApplicationController
     ) || return
     
     puts "here"
-    @map = Hash.new
+    @map_tags = Hash.new
     @problems = @filterrific.find.page(params[:page])
 
     for prb in @problems do
@@ -41,7 +41,15 @@ class ProblemsController < ApplicationController
       tag_name = Tag.where(id: ProblemTag.where(problem_id: prb.id).pick(:tag_id)).pick(:tag)
       level_name = DifficultyLevel.where(id: prb.difficulty).pick(:level)
       tag_list = tag_list.join(', ')
-      @map.store(prb.id, tag_list)
+      @map_tags.store(prb.id, tag_list)
+    end
+
+    @map_attempted = Hash.new
+    @map_passed = Hash.new
+
+    Attempt.all.each do |attempt|
+      @map_attempted.store(attempt.problem_id, "true")
+      @map_passed.store(attempt.problem_id, "true") if attempt.passed.to_s == "true"
     end
     
     respond_to do |format|
