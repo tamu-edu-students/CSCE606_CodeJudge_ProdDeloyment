@@ -149,3 +149,35 @@ RSpec.describe ProblemsController, type: :controller do
   end
 
 end
+
+RSpec.describe RatingController, type: :controller do
+  before(:all) do
+    if User.where(:username => "instructor").empty?
+      User.create(:username => "instructor",
+        :email => "instructor@xyz.com")
+      Assignment.create(:user_id => User.find_by(username: "instructor").id,
+        :role_id => Role.find_by(name: "instructor").id)
+    end
+
+    if User.where(:username => "student1").empty?
+      User.create(:username => "student1", :email => "student1@xyz.com", :rating => 1987, :firstname => "test", :lastname => "test", password: "password", password_confirmation: "password")
+      Assignment.create(:user_id => User.find_by(username: "student1").id, 
+        :role_id => Role.find_by(name: "student").id)
+    end
+
+    if User.where(:username => "student2").empty?
+      User.create(:username => "student2", :email => "student2@xyz.com", :rating => 2139, :firstname => "test", :lastname => "test", password: "password", password_confirmation: "password")
+      Assignment.create(:user_id => User.find_by(username: "student2").id, 
+        :role_id => Role.find_by(name: "student").id)
+    end
+  end
+
+  describe 'check student ranking' do
+    it 'check students are ranked in non-increasing order of their rating' do
+      get :index, params: {}
+      expect(assigns(:users)).not_to include(User.find_by(username: "instructor"))
+      expect(assigns(:users)[0]).to eq(User.find_by(username: "student2"))
+      expect(assigns(:users)[1]).to eq(User.find_by(username: "student1"))
+    end
+  end
+end
