@@ -13,17 +13,28 @@
             <th colspan="3"></th>
             <th>Difficulty</th>
             <th colspan="3"></th>
+            <th>Language</th>
+            <th colspan="3"></th>
         </tr>
     </thead>
     <tbody>
         <% @problems.each do |problem| %>
             <tr id="notice2">
-            <td><%= link_to problem.title, problem , :id => 'probTitle'%></td>
-            <th colspan="3"></th>
-            <td><%= link_to @map[problem.id].to_s, problem, :id => 'probTag' %>
-            </td>
-            <th colspan="3"></th>
-            <td><%= link_to @map_level[problem.id], problem, :id => 'probDifficulty'  %></td>
+              <td>
+                <%= link_to problem.title, problem , :id => 'probTitle'%>
+              </td>
+              <th colspan="3"></th>
+              <td>
+                <%= link_to @map[problem.id].to_s, problem, :id => 'probTag' %>
+              </td>
+              <th colspan="3"></th>
+              <td>
+                <%= link_to DifficultyLevel.find(problem.difficulty).level, problem, :id => 'probDifficulty'  %>
+              </td>
+              <th colspan="3"></th>
+              <td>
+                <%= link_to Language.find(problem.languages).pretty_name, problem, :id => 'probLanguage'  %>
+              </td>
             </tr>
         <% end %>
     </tbody>

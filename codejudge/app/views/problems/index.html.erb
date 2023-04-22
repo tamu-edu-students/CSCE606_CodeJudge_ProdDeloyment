@@ -33,65 +33,6 @@
 
 
 
-
-<div class="table col-12">
-  <table>
-    <thead>
-    <tr>
-      <th>
-        <h5> Search Problems with Tags</h5>
-        <br>
-        <%= form_with url: searchtag_path, local: true, method: :get do |f| %>
-          <%= f.select :search_tag, options_from_collection_for_select(@tags, 'id', 'tag'), prompt: "Please Select", class: 'form-control col-md-7 col-xs-12', id: 'countries_select' %>
-          <%= f.submit "Search" %>
-        <% end %>
-        <br> 
-        <h5>Search Problems with Difficulty</h5>
-        <%= form_with url: searchlevel_path, local: true, method: :get do |f| %>
-          <div>
-            <div style="float:left;">
-              <%= f.label :min_difficulty, "Minimum Difficulty:" %>
-              <%= f.text_field :min_difficulty, class: 'form-control col-md-8 col-xs-6', id: 'min_difficulty' %>
-            </div>
-            <div style="float:left;">
-              <%= f.label :max_difficulty, "Maximum Difficulty:" %>
-              <%= f.text_field :max_difficulty, class: 'form-control col-md-8 col-xs-6', id: 'max_difficulty' %>
-            </div>
-            <div style="float:left;"><%= f.submit "Search" %></div>
-          </div>
-
-        <% end %>
-      </th>
-    </tr>
-    <tr>
-      <th>Title</th>
-      <th colspan="3"></th>
-      <th>Tags</th>
-      <th colspan="3"></th>
-      <th>Difficulty</th>
-      <th colspan="3"></th>
-      <th>Language restriction</th>
-    </tr>
-    </thead>
-    <tbody>
-    <% @problems.each do |problem| %>
-      <tr id="notice2">
-        <td><%= link_to problem.title, problem , :id => 'probTitle'%></td>
-        <th colspan="3"></th>
-        <td><%= link_to @map[problem.id].to_s, problem, :id => 'probTag' %></td>
-        <th colspan="3"></th>
-        <td><%= link_to problem.difficulty, problem, :id => 'probDifficulty'  %></td>
-        <th colspan="3"></th>
-        <td><%= link_to Language.where(id: problem.languages).pick(:pretty_name), problem, :id => 'problanguage'  %></td>
-      </tr>
-    <% end %>
-    </tbody>
-  </table>
-</div>
-
-
-
-
 <%= render(
   partial: 'problems/list',
   locals: { problems: @problems}
@@ -105,3 +46,4 @@
     /* margin: 2px */
   }
 </style>
+
