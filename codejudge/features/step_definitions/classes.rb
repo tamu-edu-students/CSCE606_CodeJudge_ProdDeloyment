@@ -12,8 +12,22 @@ end
 
   
 Then('they should see a list of classes') do
-    table_list = @browser.find_element(:id, "classes_list_table")
-    raise "Fail" if !table_list.displayed?
+  rows = @browser.find_elements(:id, "classTitle")
+
+  # Iterate over each row and check if the title is present
+  contains_classes = false
+  rows.each do |row|
+    class_title = row.text
+    puts class_title
+    if class_title.include?("Test Group")
+      contains_classes = true
+      break # We can stop iterating once we find a match
+    end
+  end
+
+  unless contains_classes
+    raise "Fail"
+  end
 end
 
 

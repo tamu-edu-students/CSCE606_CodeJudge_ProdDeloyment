@@ -24,7 +24,7 @@
     </div>
     <% if policy(:problem).new? %>
       <div class="col-md-2 mb-3">
-        <%= link_to "New Problem", new_problem_path, :class => "button" , style: 'margin-left: 10px; margin-top:50px; height: 30px' %>
+        <%= link_to "New Problem", new_problem_path, :class => "button" , style: 'margin-left: 10px; margin-top:50px; height: 30px' ,:id => "newProbBtn" %>
       </div>
     <% end %>
   </div>
