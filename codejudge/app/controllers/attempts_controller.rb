@@ -50,32 +50,56 @@ class AttemptsController < ApplicationController
       @attempt.user_id = session[:user_id]
       @attempt.problem_id = params[:problem_id]
       @attempt.language_id = language_id
-
+      @attempt.save
       @testcases_query = TestCase.left_outer_joins(:problem).where(problem_id: @attempt.problem_id).map{ |r| [r.input, r.output]}
       puts @testcases_query
-
-      # @testcases = {}
+      api_timeout = 1
+      result = true
+      @testcases_query.each_with_index do |item, index|
+        timeout = index*api_timeout
+        results = SubmitCodeJob.perform(item[0], item[1], language.name, @attempt.code, @testcases_query.index(item), current_user.id, @attempt.id)
+        puts results
+        puts "working"
+        result = result && results[:passed]
+      end
+      @attempt.passed = result
       respond_to do |format|
         if @attempt.save
-          format.html { redirect_to attempt_url(@attempt), notice: "Attempt was successfully created." }
-          format.json { render :show, status: :created, location: @attempt }
+          problem_submission = ProblemSubmission.where(user_id: @attempt.user_id, problem_id: @attempt.problem_id).first
+          if problem_submission.present?
+            problem_submission.update(total_attempts: problem_submission.total_attempts + 1,
+                                      correct_attempts: problem_submission.correct_attempts + (result ? 1 : 0),
+                                      wrong_attempts: problem_submission.wrong_attempts + (result ? 0 : 1),
+                                      score: ((result || problem_submission.correct_attempts > 0) ? 1: 0))
+          else
+            ProblemSubmission.create(user_id: @attempt.user_id,
+                                     problem_id: @attempt.problem_id,
+                                     total_attempts: 1,
+                                     correct_attempts: result ? 1 : 0,
+                                     wrong_attempts: result ? 0 : 1,
+                                     score: result ? 1 : 0)
+          end
+          correct_submissions = ProblemSubmission.where(problem_id: params[:problem_id]).where('correct_attempts > 0').count
+          all_submissions = ProblemSubmission.where(problem_id: params[:problem_id]).count
+          problem = Problem.find_by(id: params[:problem_id])
 
-          api_timeout = 1
-          puts "testCase"
-          @testcases_query.each_with_index do |item, index|
-            puts "testCase2"
-            timeout = index*api_timeout
-            results = SubmitCodeJob.perform(item[0], item[1], language.name, @attempt.code, @testcases_query.index(item), current_user.id, @attempt.id)
-            puts "testCaseEnd"
-            puts results
-            if results[:passed]
-              format.html { redirect_to attempt_url(@attempt), notice: "Correct answer" }
-              format.json { render :show, status: :created, location: @attempt }
+          ratio = all_submissions.zero? ? 0 : correct_submissions.to_f / all_submissions
+          difficulty = case ratio
+                       when 0..0.4 then 3
+                       when 0.4..0.7 then 2
+                       else 1
+                       end
+
+          problem.update(difficulty: difficulty)
+
+          format.html do
+            if result
+              redirect_to attempt_url(@attempt), notice: "All Test Cases are passed"
             else
-              format.html { render :new, status: :unprocessable_entity }
-              format.json { render json: results[:stderr], status: :unprocessable_entity }
+              redirect_to attempt_url(@attempt), notice: "Test Cases Failed"
             end
           end
+          format.json { render :show, status: :created, location: @attempt }
         else
           format.html { render :new, status: :unprocessable_entity }
           format.json { render json: @attempt.errors, status: :unprocessable_entity }

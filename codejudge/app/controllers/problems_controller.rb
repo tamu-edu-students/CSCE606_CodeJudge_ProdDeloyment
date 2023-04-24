@@ -7,23 +7,38 @@ class ProblemsController < ApplicationController
 
   # GET /problems or /problems.json
   def index
+    @user_id = session[:user_id]
     @filterrific = initialize_filterrific(
       Problem,
       params[:filterrific],
       select_options: {
         # sorted_by: Problem.options_for_sorted_by,
         with_tag_id: Tag.options_for_select,
-        with_difficulty_id: DifficultyLevel.options_for_select
+        with_difficulty_id: DifficultyLevel.options_for_select,
+        with_submission: ["solved", "unsolved", "wrong"]
       },
       persistence_id: "shared_key",
       default_filter_params: {},
-      available_filters: [:with_tag_id, :with_difficulty_id],
+      available_filters: [:with_tag_id, :with_difficulty_id, :with_submission],
       sanitize_params: true,
     ) || return
-    
+
     puts "here"
     @map_tags = Hash.new
+    p params[:filterrific]
+    puts "exiting"
+    # @filterrific.filter_
+    # if params[:filterrific].present?
+    #   @problems = @filterrific.find
+    #                           .with_submission(params[:filterrific][:with_submission], @user_id)
+    #                           .with_tag_id(params[:filterrific][:with_tag_id])
+    #                           .with_difficulty_id(params[:filterrific][:with_difficulty_id])
+    #                           .paginate(page: params[:page], per_page: 10)
+    # else
     @problems = @filterrific.find.page(params[:page])
+    # end
+    # @problems = @filterrific.find.with_tag_id(params[:filterrific][:with_tag_id]).with_difficulty_id(params[:filterrific][:with_difficulty_id]).paginate(page: params[:page], per_page: 10)
+
 
     for prb in @problems do
       # problem_tags = Tag.joins(:ProblemTag).where(problem_tags: { problem_id: prb.id }).pluck(:tag)
@@ -178,7 +193,7 @@ class ProblemsController < ApplicationController
         if @problem.save
           # @problem_tag.problem_id = @problem.id
           # if @problem_tag.save!
-            format.html { redirect_to problem_url+(@problem), notice: "Problem was successfully created." }
+            format.html { redirect_to problem_url(@problem), notice: "Problem was successfully created." }
             format.json { render :show, status: :created, location: @problem }
           # end
         else

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_04_15_020727) do
+ActiveRecord::Schema[7.0].define(version: 2023_04_24_090245) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "adminpack"
   enable_extension "plpgsql"
@@ -78,6 +78,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_15_020727) do
     t.integer "time_limits_exceeded", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "score"
     t.index ["user_id", "problem_id"], name: "index_problem_submissions_on_user_id_and_problem_id", unique: true
   end
 
@@ -95,9 +96,9 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_15_020727) do
     t.datetime "updated_at", null: false
     t.bigint "author_id"
     t.text "instructor_solution"
+    t.string "tags"
     t.string "languages"
     t.integer "difficulty", default: 0
-    t.integer "tags"
     t.index ["author_id"], name: "index_problems_on_author_id"
   end
 

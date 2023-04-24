@@ -28,9 +28,9 @@ class Grader
     @headers = {
       :content_type => :json,
       :accept => :json,
-      :Authorization => "Token " + "74d34fa0-d888-4aaf-8b85-58b5a6918858"
+      :Authorization => "Token " + "c8a380b4-efdf-440c-b539-612a74c21759"
     }
-    
+    puts @url
     results = {}
 
     #Left as array for future batching support
@@ -67,7 +67,7 @@ class Grader
   end
 
   def grade_dont_save
-    header_token = "Token " + "d8fd25f3-381e-4587-a910-76dce6f31e80"
+    header_token = "Token " + "c8a380b4-efdf-440c-b539-612a74c21759"
   
     @headers = {"Authorization" => header_token, "Content-type" => "application/json"}
   

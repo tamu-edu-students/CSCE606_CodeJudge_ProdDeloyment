@@ -12,7 +12,7 @@ class CreateProblemSubmissions < ActiveRecord::Migration[6.1]
       t.timestamps
     end
 
-    add_index :problem_submissions, [:user_id, :problem_id], unique: true
+    # add_index :problem_submissions, [:user_id, :problem_id], unique: true
   end
 end
 
