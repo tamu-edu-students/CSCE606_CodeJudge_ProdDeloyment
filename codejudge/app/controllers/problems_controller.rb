@@ -178,7 +178,7 @@ class ProblemsController < ApplicationController
         if @problem.save
           # @problem_tag.problem_id = @problem.id
           # if @problem_tag.save!
-            format.html { redirect_to problem_url+(@problem), notice: "Problem was successfully created." }
+            format.html { redirect_to problem_url(@problem), notice: "Problem was successfully created." }
             format.json { render :show, status: :created, location: @problem }
           # end
         else
