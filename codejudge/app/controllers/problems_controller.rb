@@ -62,7 +62,7 @@ class ProblemsController < ApplicationController
     @map_attempted = Hash.new
     @map_passed = Hash.new
 
-    Attempt.all.each do |attempt|
+    Attempt.where(user_id: @user_id).each do |attempt|
       @map_attempted.store(attempt.problem_id, "true")
       @map_passed.store(attempt.problem_id, "true") if attempt.passed.to_s == "true"
     end

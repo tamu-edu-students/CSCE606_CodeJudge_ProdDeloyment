@@ -1,39 +1,91 @@
 <p id="notice" class="success"><%= notice %></p>
 
 <div class="col-12">
-  <%= render "partials/link", copy: "Back to Users", path: users_path, icon: "chevron-left", classes: "link--back" %>
+  <%= render "partials/link", copy: "Back to Ratings", path: rating_path, icon: "chevron-left", classes: "link--back" %>
 </div>
 
-<p>
-  <strong>Firstname:</strong>
-  <%= @user.firstname %>
-</p>
+<section>
+  <p>
+    <strong>Username:</strong>
+    <%= @show_user.username %>
+  </p>
+
+  <p>
+    <strong>Name:</strong>
+    <%= @show_user.firstname + " " + @show_user.lastname %>
+  </p>
+
+  <p>
+    <strong>Role:</strong>
+    <%= @show_roles %>
+  </p>
+
+  <p>
+    <strong>Email:</strong>
+    <%= @show_user.email %>
+  </p>
+</section>
 
 <p>
-  <strong>Lastname:</strong>
-  <%= @user.lastname %>
+  <strong>Submissions:</strong>
+  <div class="table col-12">
+    <table>
+      <thead>
+          <tr>
+              <th>Title</th>
+              <th colspan="3"></th>
+              <th>Tags</th>
+              <th colspan="3"></th>
+              <th>Difficulty</th>
+              <th colspan="3"></th>
+              <th>Language</th>
+              <th colspan="3"></th>
+              <th>Status</th>
+          </tr>
+      </thead>
+      <tbody>
+          <% @show_attempts.each do |attempt| %>
+              <tr id="notice2">
+                <td>
+                  <%= link_to Problem.find_by(id: attempt.problem_id).title, attempt , :id => 'probTitle'%>
+                </td>
+                <th colspan="3"></th>
+                <td>
+                  <%= link_to @map_tags[attempt.problem_id].to_s, attempt, :id => 'probTag' %>
+                </td>
+                <th colspan="3"></th>
+                <td>
+                  <%= link_to DifficultyLevel.find(Problem.find_by(id: attempt.problem_id).difficulty).level, attempt, :id => 'probDifficulty'  %>
+                </td>
+                <th colspan="3"></th>
+                <td>
+                  <%= link_to Language.find(Problem.find_by(id: attempt.problem_id).languages).pretty_name, attempt, :id => 'probLanguage'  %>
+                </td>
+                <th colspan="3"></th>
+                <td>
+                  <%= content_tag :span, attempt.passed ? "PASSED" : "WA", style: "color: #{attempt.passed ? 'green' : 'red'};" %>
+                </td>
+              </tr>
+          <% end %>
+      </tbody>
+    </table>
+  </div>
 </p>
+<!-- for attempt in @show_attempts do -->
+<style>
+section {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* set column sizes here */
+    grid-template-rows: auto auto; /* we want two rows */
 
-<p>
-  <strong>Username:</strong>
-  <%= @user.username %>
-</p>
+    grid-gap: 2px; /* how far between cells? */
+    grid-auto-flow: column; /* fill in by column, not row */
 
-<p>
-  <strong>Email:</strong>
-  <%= @user.email %>
-</p>
+    /* temporary property for visualization */
+    height: 150px;
+}
 
-<p>
-  <strong>Roles:</strong>
-  <ul>
-    <% @user_roles.each do |role| %>
-      <li><%= role %></li>
-    <% end %>
-  </ul>
-</p>
-
-<div class="nav-options">
-  <%= link_to "Edit this User", edit_user_path(@user), :class => "button" %>
-  <%= button_delete_modal_tag "Delete this User", @user, "User", class: "button button--delete" %>
-</div>
+section div {
+    border: 1px solid #000;
+}
+</style>

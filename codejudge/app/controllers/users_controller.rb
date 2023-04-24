@@ -9,8 +9,27 @@ class UsersController < ApplicationController
 
   # GET /users/1 or /users/1.json
   def show
-    @user_roles = @user.roles.map{|role| role.name}
-    authorize :user
+    # @user_roles = @user.roles.map{|role| role.name}
+    # authorize :user
+    @show_user = User.find(params[:id])
+    @show_roles = Role.where(id: Assignment.where(user_id: params[:id]).pluck(:role_id)).pluck(:name).join(" / ")
+    @show_attempts = Attempt.where(user_id: params[:id])
+
+    @map_tags = Hash.new
+
+    for prb in Problem.all do
+      results = ActiveRecord::Base.connection.execute("
+        SELECT tags.tag
+        FROM problem_tags
+        JOIN tags ON problem_tags.tag_id = tags.id
+        WHERE problem_tags.problem_id = #{prb.id}")
+      tag_list = results.map { |row| row['tag'] }
+      if tag_list.length == 0
+        tag_list[0] = "No Tag Specified"
+      end
+      tag_list = tag_list.join(', ')
+      @map_tags.store(prb.id, tag_list)
+    end
   end
 
   # GET /users/new
