@@ -13,7 +13,8 @@ class Problem < ApplicationRecord
     default_filter_params: { with_tag_id: nil },
     available_filters: [
       :with_tag_id,
-      :with_difficulty_id
+      :with_difficulty_id,
+      :with_submission
     ]
   )
   scope :with_tag_id, ->(tag_id) {
@@ -26,5 +27,23 @@ class Problem < ApplicationRecord
     # where(tags: tag_id )
     where(difficulty: difficulty_id)
   }
+
+  scope :with_submission, ->(submission_type, user_id) {
+    puts "HIIIIIIII"
+    case submission_type
+    when 'solved'
+      problem_ids = ProblemSubmission.where(user_id: user_id, correct_attempts: 1..Float::INFINITY).pluck(:problem_id)
+      where(id: problem_ids)
+    when 'unsolved'
+      problem_ids = ProblemSubmission.where(user_id: user_id).pluck(:problem_id)
+      where.not(id: problem_ids)
+    when 'wrong'
+      problem_ids = ProblemSubmission.where(user_id: user_id, correct_attempts: 0, wrong_attempts: 1..Float::INFINITY).pluck(:problem_id)
+      where(id: problem_ids)
+    else
+      all
+    end
+  }
+
 
 end
