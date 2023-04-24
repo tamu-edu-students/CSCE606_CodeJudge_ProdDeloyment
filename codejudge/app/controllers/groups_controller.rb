@@ -1,6 +1,6 @@
 class GroupsController < ApplicationController
   before_action :set_group, only: %i[ show edit update destroy ]
-  helper_method :get_users_of_group, :get_problems_of_group, :get_group_id
+  helper_method :get_users_of_group, :get_problems_of_group, :get_group_id, :get_tags_of_problems
   # GET /groups or /groups.json
   def index
     @groups = Group.where(author_id: cookies.signed[:user_id])
@@ -8,6 +8,24 @@ class GroupsController < ApplicationController
     @users = User.all
     @problems = Problem.all
     @problem_group = ProblemGroup.all
+    @map_tags = Hash.new
+
+    for prb in @problems do
+      results = ActiveRecord::Base.connection.execute("
+        SELECT tags.tag
+        FROM problem_tags
+        JOIN tags ON problem_tags.tag_id = tags.id
+        WHERE problem_tags.problem_id = #{prb.id}")
+      tag_list = results.map { |row| row['tag'] }
+      if tag_list.length == 0
+        tag_list[0] = "No Tag Specified"
+      end
+
+      tag_name = Tag.where(id: ProblemTag.where(problem_id: prb.id).pick(:tag_id)).pick(:tag)
+      level_name = DifficultyLevel.where(id: prb.difficulty).pick(:level)
+      tag_list = tag_list.join(', ')
+      @map_tags.store(prb.id, tag_list)
+    end
   end
 
   # GET /groups/1 or /groups/1.json
@@ -72,6 +90,22 @@ class GroupsController < ApplicationController
 
   def get_problems_of_group
     problem_group_mappings = ProblemGroup.where(group_id: params[:id])
+  end
+
+  def get_tags_of_problems(prb)
+    results = ActiveRecord::Base.connection.execute("
+        SELECT tags.tag
+        FROM problem_tags
+        JOIN tags ON problem_tags.tag_id = tags.id
+        WHERE problem_tags.problem_id = #{prb.id}")
+    tag_list = results.map { |row| row['tag'] }
+    if tag_list.length == 0
+      tag_list[0] = "No Tag Specified"
+    end
+
+    tag_name = Tag.where(id: ProblemTag.where(problem_id: prb.id).pick(:tag_id)).pick(:tag)
+    level_name = DifficultyLevel.where(id: prb.difficulty).pick(:level)
+    tag_list = tag_list.join(', ')
   end
 
   def get_group_id
