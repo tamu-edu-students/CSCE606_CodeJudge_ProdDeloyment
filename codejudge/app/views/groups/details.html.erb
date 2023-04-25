@@ -1,8 +1,8 @@
 <p style="color: green"><%= notice %></p>
 
-<h1>Class Details</h1>
+<h1><%= get_class.group_title %> Class</h1>
 <div  class="col-12">
-  <h4><%= get_class_description.description %></h4>
+  <h4><%= get_class.description %></h4>
 </div>
 <%if current_user.role? :instructor %>
   <div  class="col-12">

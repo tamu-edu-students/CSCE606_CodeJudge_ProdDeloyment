@@ -1,6 +1,6 @@
 class GroupsController < ApplicationController
   before_action :set_group, only: %i[ show edit update destroy ]
-  helper_method :get_users_of_group, :get_problems_of_group, :get_group_id, :get_tags_of_problems, :get_class_description
+  helper_method :get_users_of_group, :get_problems_of_group, :get_group_id, :get_tags_of_problems, :get_class
   # GET /groups or /groups.json
   def index
     @groups = Group.where(author_id: cookies.signed[:user_id])
@@ -94,7 +94,7 @@ class GroupsController < ApplicationController
     group_id = params[:id]
   end
 
-  def get_class_description
+  def get_class
     @group_description = Group.where(id: get_group_id)[0]
   end
 
