@@ -223,7 +223,8 @@ class ProblemsController < ApplicationController
   # DELETE /problems/1 or /problems/1.json
   def destroy
     authorize @problem
-    
+
+    ProblemGroup.where(problem_id: @problem.id).destroy_all
     @problem.destroy
 
     respond_to do |format|
