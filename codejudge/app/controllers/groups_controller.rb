@@ -53,9 +53,7 @@ class GroupsController < ApplicationController
 
   # DELETE /groups/1 or /groups/1.json
   def destroy
-    puts "here"
-    problem_group = ProblemGroup.where(group_id: @group.id)
-    problem_group.destroy
+    ProblemGroup.where(group_id: @group.id).destroy_all
     @group.destroy
     respond_to do |format|
       format.html { redirect_to instructors_path, notice: "class group was successfully destroyed." }
