@@ -11,6 +11,21 @@ class AttemptsController < ApplicationController
     else
       @attempts = Attempt.all
     end
+    
+    @map_tags = Hash.new
+    for prb in Problem.all do
+      results = ActiveRecord::Base.connection.execute("
+        SELECT tags.tag
+        FROM problem_tags
+        JOIN tags ON problem_tags.tag_id = tags.id
+        WHERE problem_tags.problem_id = #{prb.id}")
+      tag_list = results.map { |row| row['tag'] }
+      if tag_list.length == 0
+        tag_list[0] = "No Tag Specified"
+      end
+      tag_list = tag_list.join(', ')
+      @map_tags.store(prb.id, tag_list)
+    end
   end
 
   # GET /attempts/1 or /attempts/1.json
