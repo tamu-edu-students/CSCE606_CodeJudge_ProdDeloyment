@@ -3,21 +3,21 @@
 
 <h1>Class Details</h1>
 
-<<div class="table col-12">
+<div class="table col-12">
   <table>
     <thead>
-      <tr>
-        <th><h1 class="col-12">Classes</h1></th>
-        <th>
-        
-        </th>
-        <th>
+    <tr>
+      <th><h1 class="col-12">Classes</h1></th>
+      <th></th>
+      <th>
         <%= form_with url: joinclass_student_group_url(1), local: true, method: :post do |f|%>
           <%= f.text_field :classcode, placeholder: "Enter class code" %>
-          <%= f.submit "Join Class" %>
-        <%end%>
-
-      </tr>
+          </th>
+          <th>
+            <%= f.submit "Join Class", style: 'margin-left: 10px; margin-top:50px; height: 30px' %>
+        <% end %>
+        </th>
+        </tr>
     </thead>
     <tbody>
     <% for group in @groups_2 %>
@@ -29,3 +29,4 @@
     </tbody>
   </table>
 </div>
+

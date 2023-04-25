@@ -1,15 +1,17 @@
 <p style="color: green"><%= notice %></p>
 
-<h1>Class Details</h1>
-
+<h1><%= get_class.group_title %> Class</h1>
+<div  class="col-12">
+  <h4><%= get_class.description %></h4>
+</div>
 <%if current_user.role? :instructor %>
-<div class="col-12">
-  <%= link_to "Add Students", addition_student_group_url(get_group_id), :class => "button" %>
-</div>
-
-<div class="col-12">
-  <%= link_to "Add Problems", addproblem_problem_group_url(get_group_id), :class => "button" %>
-</div>
+  <div  class="col-12">
+      <%= link_to "Add Students", addition_student_group_url(get_group_id), :class => "button", style: "float: right; position: right; " %>
+      <%= link_to "Add Problems", addproblem_problem_group_url(get_group_id), :class => "button", style: "float: right; position: right; margin-right: 50px" %>
+  </div>
+  <div  class="col-12">
+    <br>
+      </div>
 
 
 <div class="table col-12">
@@ -20,17 +22,26 @@
         <% user_count = get_users_of_group.count %>
         <th><br></th>
         <th><br></th>
-        <th><h3>Total Users: <%= user_count %></h3></th>
+        <th><br></th>
+        <th><br></th>
+        <th><br></th>
+        <th><br></th>
+        <th><br></th>
+        <th><br></th>
+        <th><br></th>
+        <th><br></th>
+        <th style="width:80%"><br></th>
+        <th style="width:100%"><h3 style="float: bottom; text-align: right;">Total Users: <%= user_count%></h3></th>
       </tr>
     </thead>
     <tbody>
       <% @students_of_this_group = get_users_of_group.each do |t|%>
       <% currentUser = User.find(t.user_id) %>
       <tr>
-        <td><%=link_to currentUser.firstname, currentUser %></td>
-        <td><%=link_to currentUser.lastname, currentUser %></td>
-        <td><%=link_to currentUser.email, currentUser %></td>
-        <td>
+        <td colspan="3"><%=link_to currentUser.firstname, currentUser %></td>
+        <td colspan="3"><%=link_to currentUser.lastname, currentUser %></td>
+        <td colspan="6"><%=link_to currentUser.email, currentUser %></td>
+        <td colspan="6">
           <%= link_to 'Remove From Class', {:action=>"remove_student_group", :controller=>"student_groups", :id=> t.id} %>
         </td>
       </tr>
@@ -47,7 +58,7 @@
         <% problem_count = get_problems_of_group.count %>
         <th><br></th>
         <th><br></th>
-        <th><br></th>
+        <th style="text-align: right">Tags</th>
         <th><br></th>
         <th><br></th>
         <th><br></th>
@@ -65,7 +76,7 @@
       <tr>
         <td><%=link_to problem.title, problem %></td>
         <th colspan="2"></th>
-        <th colspan="2"></th>
+        <th colspan="2"><%=link_to get_tags_of_problems(problem).to_s, problem %></th>
         <th colspan="2"></th>
         <th colspan="2"></th>
         <th colspan="2"></th>
