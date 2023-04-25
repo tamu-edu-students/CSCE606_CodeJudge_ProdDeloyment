@@ -188,17 +188,18 @@ class ProblemsController < ApplicationController
       if problem.present?
         flash[:warning] = "Problem already in list!"
         redirect_to request.referer
-      end
+      else
         respond_to do |format|
-        if @problem.save
-          # @problem_tag.problem_id = @problem.id
-          # if @problem_tag.save!
-            format.html { redirect_to problem_url(@problem), notice: "Problem was successfully created." }
-            format.json { render :show, status: :created, location: @problem }
-          # end
-        else
-          format.html { render :new, status: :unprocessable_entity }
-          format.json { render json: @problem.errors, status: :unprocessable_entity }
+          if @problem.save
+            # @problem_tag.problem_id = @problem.id
+            # if @problem_tag.save!
+              format.html { redirect_to problem_url(@problem), notice: "Problem was successfully created." }
+              format.json { render :show, status: :created, location: @problem }
+            # end
+          else
+            format.html { render :new, status: :unprocessable_entity }
+            format.json { render json: @problem.errors, status: :unprocessable_entity }
+          end
         end
       end
     end
