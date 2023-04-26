@@ -81,9 +81,9 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_26_114650) do
     t.datetime "updated_at", null: false
     t.bigint "author_id"
     t.text "instructor_solution"
+    t.string "tags"
     t.string "languages"
     t.integer "difficulty", default: 11
-    t.integer "tags"
     t.index ["author_id"], name: "index_problems_on_author_id"
   end
 

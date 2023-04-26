@@ -55,7 +55,7 @@ role_ta = Role.create(name: "ta")
 role_student = Role.create(name: "student")
 
 #TEST USERS
-lok = User.create!(username: "lok", password: "password", password_confirmation: "password", firstname: "lok", lastname: "s", email: "lok@tamu.edu")
+lok = User.create!(username: "loks", password: "password", password_confirmation: "password", firstname: "lok", lastname: "s", email: "lok@tamu.edu")
 lok.assignments.create!(role: role_student)
 nachiket = User.create!(username: "nachiket", password: "password", password_confirmation: "password", firstname: "nachiket", lastname: "n", email: "nachiket@tamu.edu")
 nachiket.assignments.create!(role: role_student)
