@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_04_25_050735) do
+ActiveRecord::Schema[7.0].define(version: 2023_04_26_114650) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -67,19 +67,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_25_050735) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "problem_submissions", force: :cascade do |t|
-    t.string "user_id"
-    t.string "problem_id"
-    t.integer "total_attempts", default: 0
-    t.integer "correct_attempts", default: 0
-    t.integer "wrong_attempts", default: 0
-    t.integer "compilation_failures", default: 0
-    t.integer "time_limits_exceeded", default: 0
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["user_id", "problem_id"], name: "index_problem_submissions_on_user_id_and_problem_id", unique: true
-  end
-
   create_table "problem_tags", force: :cascade do |t|
     t.bigint "problem_id"
     t.bigint "tag_id"
@@ -95,7 +82,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_25_050735) do
     t.bigint "author_id"
     t.text "instructor_solution"
     t.string "languages"
-    t.integer "difficulty", default: 0
+    t.integer "difficulty", default: 11
     t.integer "tags"
     t.index ["author_id"], name: "index_problems_on_author_id"
   end

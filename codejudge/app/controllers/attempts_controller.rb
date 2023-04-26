@@ -11,7 +11,7 @@ class AttemptsController < ApplicationController
     else
       @attempts = Attempt.all
     end
-    
+
     @map_tags = Hash.new
     for prb in Problem.all do
       results = ActiveRecord::Base.connection.execute("
@@ -53,15 +53,11 @@ class AttemptsController < ApplicationController
     puts "here2"
     @attempt = Attempt.new
     language = Language.find_by(pretty_name: params[:attempt][:language_list])
-    # puts language.name
 
     if language
-      # puts "hi"
       language_id = language.id
 
       @attempt.code = File.read(params[:attempt][:sourcecode])
-      # puts @attempt.code
-      # puts "hi"
       @attempt.user_id = session[:user_id]
       @attempt.problem_id = params[:problem_id]
       @attempt.language_id = language_id
@@ -80,30 +76,27 @@ class AttemptsController < ApplicationController
       @attempt.passed = result
       respond_to do |format|
         if @attempt.save
-          problem_submission = ProblemSubmission.where(user_id: @attempt.user_id, problem_id: @attempt.problem_id).first
-          if problem_submission.present?
-            problem_submission.update(total_attempts: problem_submission.total_attempts + 1,
-                                      correct_attempts: problem_submission.correct_attempts + (result ? 1 : 0),
-                                      wrong_attempts: problem_submission.wrong_attempts + (result ? 0 : 1),
-                                      score: ((result || problem_submission.correct_attempts > 0) ? 1: 0))
-          else
-            ProblemSubmission.create(user_id: @attempt.user_id,
-                                     problem_id: @attempt.problem_id,
-                                     total_attempts: 1,
-                                     correct_attempts: result ? 1 : 0,
-                                     wrong_attempts: result ? 0 : 1,
-                                     score: result ? 1 : 0)
-          end
-          correct_submissions = ProblemSubmission.where(problem_id: params[:problem_id]).where('correct_attempts > 0').count
-          all_submissions = ProblemSubmission.where(problem_id: params[:problem_id]).count
+          correct_submissions = Attempt.where(user_id: @attempt.user_id, problem_id: @attempt.problem_id, passed: true).count
+          all_submissions = Attempt.where(user_id: @attempt.user_id, problem_id: @attempt.problem_id).count
           problem = Problem.find_by(id: params[:problem_id])
 
-          ratio = all_submissions.zero? ? 0 : correct_submissions.to_f / all_submissions
-          difficulty = case ratio
-                       when 0..0.4 then 3
-                       when 0.4..0.7 then 2
-                       else 1
-                       end
+          if all_submissions < 5
+            difficulty = 11
+          else
+            correct_ratio = correct_submissions.to_f / all_submissions
+            difficulty = case correct_ratio
+              when 0..0.05 then 10
+              when 0.05..0.1 then 9
+              when 0.1..0.15 then 8
+              when 0.15..0.2 then 7
+              when 0.2..0.25 then 6
+              when 0.25..0.3 then 5
+              when 0.3..0.35 then 4
+              when 0.35..0.4 then 3
+              when 0.4..0.45 then 2
+              else 1
+            end
+          end
 
           problem.update(difficulty: difficulty)
 

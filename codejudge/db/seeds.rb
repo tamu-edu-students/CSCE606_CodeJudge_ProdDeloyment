@@ -1,120 +1,52 @@
-# # This file should contain all the record creation needed to seed the database with its default values.
-# # The data can then be loaded with the bin/rails db:seed command (or created alongside the database with db:setup).
-# #
-# # Examples:
-# #
-# #   movies = Movie.create([{ name: "Star Wars" }, { name: "Lord of the Rings" }])
-# #   Character.create(name: "Luke", movie: movies.first)
-#
-# #User.create(username: "admin", password: "admin", password_confirmation: "admin", firstname: "admin", lastname: "admin", email: "admin@email.com", registration_time: DateTime.now, user_role: 0)
-#
+langs = [
+  ["assembly", ".as", "Assembly"],
+  ["ats", ".dats", "ATS"],
+  ["bash", ".sh", "Bash"],
+  ["c", ".c", "C"],
+  ["clojure", ".clj", "Clojure"],
+  ["cobol", ".cob", "COBOL"],
+  ["cofeescript", ".coffee", "CoffeeScript"],
+  ["cpp", ".cpp", "C++"],
+  ["crystal", ".cr", "Crystal"],
+  ["csharp", ".cs", "C#"],
+  ["d", ".d", "D"],
+  ["elixir", ".ex", "Elixir"],
+  ["elm", ".elm", "Elm"],
+  ["erlang", ".erl", "Erlang"],
+  ["fsharp", ".fs", "F#"],
+  ["go", ".go", "Go"],
+  ["groovy", ".groovy", "Groovy"],
+  ["haskell", ".hs", "Haskell"],
+  ["idris", ".idr", "Idris"],
+  ["java", ".java", "Java"],
+  ["javascript", ".js", "Javascript"],
+  ["julia", ".jl", "Julia"],
+  ["kotlin", ".kt", "Kotlin"],
+  ["lua", ".lua", "Lua"],
+  ["mercury", ".m", "Mercury"],
+  ["nim", ".nim", "Nim"],
+  ["nix", ".nix", "Nix"],
+  ["ocaml", ".ml", "OCaml"],
+  ["perl", ".pl", "Perl"],
+  ["php", ".php", "PHP"],
+  ["python", ".py", "Python 3"],
+  ["raku", ".raku", "Raku"],
+  ["ruby", ".rb", "Ruby"],
+  ["rust", ".rs", "Rust"],
+  ["sac", ".sac", "SaC"],
+  ["scala", ".scala", "Scala"],
+  ["swift", ".swift", "Swift"],
+  ["typescript", ".ts", "TypeScript"],
+  ["zig", ".zig", "Zig"]
+]
 
-# require 'faker'
-#
-# #TEST ROLES
-# role_admin = Role.create(name: "admin")
-# role_instructor = Role.create(name: "instructor")
-# role_ta = Role.create(name: "ta")
-# role_student = Role.create(name: "student")
-#
-# #TEST USERS
-# admin = User.create!(username: "admin", password: "password", password_confirmation: "password", firstname: "admin", lastname: "admin", email: "admin@example.com")
-# admin.assignments.create!(role: role_admin)
-# instructor = User.create!(username: "instructor", password: "password", password_confirmation: "password", firstname: "test", lastname: "instructor", email: "instructor@example.com")
-# instructor.assignments.create!(role: role_instructor)
-# ta = User.create!(username: "teaching_asst", password: "password", password_confirmation: "password", firstname: "test", lastname: "ta", email: "ta@example.com")
-# ta.assignments.create!(role: role_ta)
-# student = User.create!(username: "student", password: "password", password_confirmation: "password", firstname: "test", lastname: "student", email: "student@example.com")
-#
-#
-# # (1..50).each do |id|
-# #   user = User.create(
-# #     username: Faker::Creature::Animal.unique.name,
-# #     password: Faker::Alphanumeric.alphanumeric(number: 10),
-# #     firstname: Faker::Name.first_name,
-# #     lastname: Faker::Name.last_name,
-# #     email: Faker::Internet.email
-# #   )
-# # end
-#
-# #TEST PROBLEMS
-# problem = Problem.create!(
-#   title: "Hello World",
-#   body: "Output should contain one line, containing the string 'Hello World!'."
-# )
-# problem.save
-# problem.test_cases.create!(input: "", output: "Hello World!")
-#
-# fib = Problem.create!(
-#   title: "Fibonacci Sequence",
-#   body: "Given a number n, print the nth Fibonacci number."
-# )
-#
-# fib.test_cases.create!(input: "2", output: "1", example: false)
-# fib.test_cases.create!(input: "9", output: "34", example: false)
-# fib.test_cases.create!(input: "1", output: "1", example: false)
-#
-# # (1..10).each do |id|
-# #   Problem.create(
-# #     title: Faker::Lorem.sentence(word_count: 3),
-# #     body: Faker::Lorem.paragraph(sentence_count: 5)
-# #   )
-# # end
-#
-# langs = [
-# ["assembly", ".as", "Assembly"],
-# ["ats", ".dats", "ATS"],
-# ["bash", ".sh", "Bash"],
-# ["c", ".c", "C"],
-# ["clojure", ".clj", "Clojure"],
-# ["cobol", ".cob", "COBOL"],
-# ["cofeescript", ".coffee", "CoffeeScript"],
-# ["cpp", ".cpp", "C++"],
-# ["crystal", ".cr", "Crystal"],
-# ["csharp", ".cs", "C#"],
-# ["d", ".d", "D"],
-# ["elixir", ".ex", "Elixir"],
-# ["elm", ".elm", "Elm"],
-# ["erlang", ".erl", "Erlang"],
-# ["fsharp", ".fs", "F#"],
-# ["go", ".go", "Go"],
-# ["groovy", ".groovy", "Groovy"],
-# ["haskell", ".hs", "Haskell"],
-# ["idris", ".idr", "Idris"],
-# ["java", ".java", "Java"],
-# ["javascript", ".js", "Javascript"],
-# ["julia", ".jl", "Julia"],
-# ["kotlin", ".kt", "Kotlin"],
-# ["lua", ".lua", "Lua"],
-# ["mercury", ".m", "Mercury"],
-# ["nim", ".nim", "Nim"],
-# ["nix", ".nix", "Nix"],
-# ["ocaml", ".ml", "OCaml"],
-# ["perl", ".pl", "Perl"],
-# ["php", ".php", "PHP"],
-# ["python", ".py", "Python 3"],
-# ["raku", ".raku", "Raku"],
-# ["ruby", ".rb", "Ruby"],
-# ["rust", ".rs", "Rust"],
-# ["sac", ".sac", "SaC"],
-# ["scala", ".scala", "Scala"],
-# ["swift", ".swift", "Swift"],
-# ["typescript", ".ts", "TypeScript"],
-# ["zig", ".zig", "Zig"]
-# ]
-#
-# langs.each do |lang|
-#   Language.create(
-#     name: lang[0],
-#     extension: lang[1],
-#     pretty_name: lang[2]
-
-#   movies = Movie.create([{ name: "Star Wars" }, { name: "Lord of the Rings" }])
-#   Character.create(name: "Luke", movie: movies.first)
-
-#User.create(username: "admin", password: "admin", password_confirmation: "admin", firstname: "admin", lastname: "admin", email: "admin@email.com", registration_time: DateTime.now, user_role: 0)
-
-require 'faker'
+langs.each do |lang|
+  Language.create(
+    name: lang[0],
+    extension: lang[1],
+    pretty_name: lang[2]
+  )
+end
 
 #TEST ROLES
 role_admin = Role.create(name: "admin")
@@ -123,66 +55,32 @@ role_ta = Role.create(name: "ta")
 role_student = Role.create(name: "student")
 
 #TEST USERS
-admin = User.create!(username: "test", password: "password", password_confirmation: "password", firstname: "admin", lastname: "admin", email: "admin@example.com")
-admin.assignments.create!(role: role_admin)
-instructor = User.create!(username: "instructor", password: "password", password_confirmation: "password", firstname: "test", lastname: "instructor", email: "instructor@example.com")
-instructor.assignments.create!(role: role_instructor)
-ta = User.create!(username: "teaching_asst", password: "password", password_confirmation: "password", firstname: "test", lastname: "ta", email: "ta@example.com")
-ta.assignments.create!(role: role_ta)
-student = User.create!(username: "student", password: "password", password_confirmation: "password", firstname: "test", lastname: "student", email: "student@example.com")
+lok = User.create!(username: "lok", password: "password", password_confirmation: "password", firstname: "lok", lastname: "s", email: "lok@tamu.edu")
+lok.assignments.create!(role: role_student)
+nachiket = User.create!(username: "nachiket", password: "password", password_confirmation: "password", firstname: "nachiket", lastname: "n", email: "nachiket@tamu.edu")
+nachiket.assignments.create!(role: role_student)
+druv = User.create!(username: "druv", password: "password", password_confirmation: "password", firstname: "druv", lastname: "g", email: "druv@tamu.edu")
+druv.assignments.create!(role: role_student)
+nagarjuna = User.create!(username: "nagarjuna", password: "password", password_confirmation: "password", firstname: "nagarjuna", lastname: "k", email: "nagarjuna@tamu.edu")
+nagarjuna.assignments.create!(role: role_student)
+praveen = User.create!(username: "praveen", password: "password", password_confirmation: "password", firstname: "praveen", lastname: "k", email: "praveen@tamu.edu")
+praveen.assignments.create!(role: role_student)
+anmol = User.create!(username: "anmol", password: "password", password_confirmation: "password", firstname: "anmol", lastname: "a", email: "anmol@tamu.edu")
+anmol.assignments.create!(role: role_student)
+ritchey = User.create!(username: "ritchey", password: "password", password_confirmation: "password", firstname: "philip", lastname: "r", email: "philip@tamu.edu")
+ritchey.assignments.create!(role: role_instructor)
 
-
-# (1..50).each do |id|
-#   user = User.create(
-#     username: Faker::Creature::Animal.unique.name,
-#     password: Faker::Alphanumeric.alphanumeric(number: 10),
-#     firstname: Faker::Name.first_name,
-#     lastname: Faker::Name.last_name,
-#     email: Faker::Internet.email
-#   )
-# end
-#
-# new_tags = [
-#     ["Array","Array"],
-#     ["BFS", "BFS"],
-#     ["Backtracking", "Backtracking"],
-#     ["Binary Search","Binary Search"],
-#     ["DFS","DFS"],
-#     ["Dynamic Programming","Dynamic Programming"],
-#     ["Graph","Graph"],
-#     ["Greedy","Greedy"],
-#     ["Hash Table","Hash Tables"],
-#     ["Linked List","Linked Lists"],
-#     ["Math","Maths"],
-#     ["Matrix","Matrices"],
-#     ["Other","Others"],
-#     ["Queue","Queues"],
-#     ["Recursion","Recursions"],
-#     ["Sorting","Sortings"],
-#     ["Stack","Stacks"],
-#     ["String","Strings"],
-#     ["Tree","Trees"],
-#     ["Two Pointers","Two Pointers"]
-# ]
-# new_tags.each do |new_tag|
-#   Tag.create(
-#     tag: new_tag[0],
-#     description: new_tag[1]
-#   )
-# end
-
-new_difficulty_levels = [
-  ["Easy", "Easy"],
-  ["Medium", "Medium"],
-  ["Hard", "Hard"],
-]
-new_difficulty_levels.each do |level|
+(1..10).each do |i|
   DifficultyLevel.create(
-    level: level[0],
-    description: level[1]
+    level: i.to_s,
+    description: i.to_s
   )
 end
 
+DifficultyLevel.create(
+  level: "N/A",
+  description: "N/A"
+)
 
 new_tags = [
     ["Array","Array"],
@@ -206,49 +104,48 @@ new_tags = [
     ["Tree","Trees"],
     ["Two Pointers","Two Pointers"]
 ]
+
 new_tags.each do |new_tag|
-  Tag.create(
+  Tag.create!(
     tag: new_tag[0],
     description: new_tag[1]
   )
 end
 
-
-# Test Classes
+Test Classes
 ruby_class = Group.create!(
   author_id: "a_1",
-  title: "Ruby Class",
-  description: "This class is for Ruby Course"
+  group_title: "Ruby Class",
+  description: "This class is for Ruby Course",
   classcode: "xyzasd876"
 )
 
 python_class = Group.create!(
   author_id: "a_2",
-  title: "Python Class",
-  description: "This class is for Python Course"
+  group_title: "Python Class",
+  description: "This class is for Python Course",
   classcode: "yzasd87"
 )
 
 
 java_class = Group.create!(
   author_id: "a_3",
-  title: "Java Class",
-  description: "This class is for Java Course"
+  group_title: "Java Class",
+  description: "This class is for Java Course",
   classcode: "zasd87"
 )
 
 cpp_class = Group.create!(
   author_id: "a_4",
-  title: "cpp Class",
-  description: "This class is for cpp Course"
+  group_title: "cpp Class",
+  description: "This class is for cpp Course",
   classcode: "asd87"
 )
 
 
 c_class = Group.create!(
   author_id: "a_5",
-  title: "c Class",
-  description: "This class is for c Course"
+  group_title: "c Class",
+  description: "This class is for c Course",
   classcode: "sd87"
 )
-
