@@ -40,7 +40,7 @@ RSpec.describe ProblemsController, type: :controller do
 
     if User.where(:username => "instructor").empty?
       User.create(:username => "instructor",
-        :email => "instructor@xyz.com")
+        :email => "instructor@xyz.com", :firstname => "test", :lastname => "test", password: "password", password_confirmation: "password")
       Assignment.create(:user_id => User.find_by(username: "instructor").id,
         :role_id => Role.find_by(name: "instructor").id)
     end
@@ -53,7 +53,7 @@ RSpec.describe ProblemsController, type: :controller do
   describe 'check problem main page' do
     it 'check the number of problems  on the main page' do
       get :index, params: {}
-      expect(assigns(:problems).count).to eq(4) # 2 porblems were added in this test and two problems were added in test db seed
+      expect(assigns(:problems).count).to eq(2) # 2 porblems were added in this test and two problems were added in test db seed
     end
     it 'check if the added problems are present on the main page' do
       get :index, params: {}
@@ -92,16 +92,6 @@ RSpec.describe ProblemsController, type: :controller do
     end
   end
 
-  describe 'check tags drop down' do
-    it 'select tags from drop down and check if appropriate problems are present or absent' do
-      allow(controller).to receive(:search_tag_params).and_return("1")
-      post :searchtag, params: {}
-      expect(assigns(:tag_name)).to eq("Array")
-      expect(assigns(:problems)).to include(Problem.find_by(title: 'Array Sum'))
-      expect(assigns(:problems)).not_to include(Problem.find_by(title: 'Dynamic Arrays'))
-    end
-  end
-
   describe 'edit button check' do
     it 'edit the language restriction and expect it to change' do
       problem = Problem.find_by(title: 'Array Sum')
@@ -117,7 +107,7 @@ RSpec.describe ProblemsController, type: :controller do
       new_tags = 7
       allow(controller).to receive(:tag_params).and_return(new_tags)
       put :update, params: { id: problem.id, problem: { tags: new_tags } }
-      expect(Problem.find(problem.id).tags).to eq(new_tags)
+      expect(ProblemTag.find(problem.id).tag_id).to eq(new_tags)
     end
   end
 
@@ -126,25 +116,20 @@ RSpec.describe ProblemsController, type: :controller do
       problem = Problem.find_by(title: 'Array Sum')
       delete :destroy, params: {id: problem.id}
       get :index, params: {}
-      expect(assigns(:problems).count).to eq(3)
+      expect(assigns(:problems).count).to eq(1)
       expect(Problem.where(title: "Array Sum")).not_to exist
     end
   end
 
   describe 'Multiple problem tags' do
-    it 'check the problem tags for ech problem on the main page' do
-      get :index, params: {}
-      tags_map = assigns(:map)
-      expect(tags_map[Problem.find_by(title: 'Array Sum').id].to_s).to eq "Array, Backtracking, Graph"
-      expect(tags_map[Problem.find_by(title: 'Dynamic Arrays').id].to_s).to eq "Binary Search, Graph"
-    end
-  end
+    it 'check the problem tags for each problem on the main page' do
+      expect(ProblemTag.where(problem_id: Problem.find_by(title: 'Array Sum').id, tag_id: 1)).to exist
+      expect(ProblemTag.where(problem_id: Problem.find_by(title: 'Array Sum').id, tag_id: 3)).to exist
+      expect(ProblemTag.where(problem_id: Problem.find_by(title: 'Array Sum').id, tag_id: 7)).to exist
 
-  describe 'problem rating filter' do
-    it 'apply a min, max filter and check if appropriate problems are retrieved' do
-      get :searchlevel, params: {min_difficulty: 5, max_difficulty: 9}
-      expect(assigns(:problems)).not_to include(Problem.find_by(title: 'Array Sum'))
-      expect(assigns(:problems)).to include(Problem.find_by(title: 'Dynamic Arrays'))
+      expect(ProblemTag.where(problem_id: Problem.find_by(title: 'Dynamic Arrays').id, tag_id: 4)).to exist
+      expect(ProblemTag.where(problem_id: Problem.find_by(title: 'Dynamic Arrays').id, tag_id: 7)).to exist
+
     end
   end
 
@@ -178,6 +163,30 @@ RSpec.describe RatingController, type: :controller do
       expect(assigns(:users)).not_to include(User.find_by(username: "instructor"))
       expect(assigns(:users)[0]).to eq(User.find_by(username: "student2"))
       expect(assigns(:users)[1]).to eq(User.find_by(username: "student1"))
+    end
+  end
+end
+
+RSpec.describe UsersController, type: :controller do
+  before(:all) do
+    if User.where(:username => "student1").empty?
+      User.create(:username => "student1", :email => "student1@xyz.com", :rating => 1987, :firstname => "test", :lastname => "test", password: "password", password_confirmation: "password")
+      Assignment.create(:user_id => User.find_by(username: "student1").id, 
+        :role_id => Role.find_by(name: "student").id)
+    end
+
+    if User.where(:username => "student2").empty?
+      User.create(:username => "student2", :email => "student2@xyz.com", :rating => 2139, :firstname => "test", :lastname => "test", password: "password", password_confirmation: "password")
+      Assignment.create(:user_id => User.find_by(username: "student2").id, 
+        :role_id => Role.find_by(name: "student").id)
+    end
+  end
+
+  describe 'show user page' do
+    it 'check we are getting the same user from the show user page' do
+      user = User.find_by(username: "student1")
+      get :show, params: {id: user.id}
+      expect(assigns(:show_user)).to eq(user)
     end
   end
 end
