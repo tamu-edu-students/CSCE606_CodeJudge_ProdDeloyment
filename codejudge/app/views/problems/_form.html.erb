@@ -19,8 +19,6 @@
 
   <%#= f.label "Tags" %>
   <%#= f.select :tags, options_from_collection_for_select(@tags, 'id', 'tag', f.object.tags), class: 'form-control col-md-7 col-xs-12', id: 'countries_select' %>
-  <%= f.label "Difficulty" %>
-  <%= f.select :difficulty, options_from_collection_for_select(@difficulty_levels, 'id', 'level', f.object.difficulty), class: 'form-control col-md-7 col-xs-12', id: 'countries_select' %>
   <%= f.label "Language restriction" %>
   <%= f.select :languages, options_from_collection_for_select(@languages, 'id', 'name', f.object.languages), class: 'form-control col-md-7 col-xs-12', id: 'countries_select' %>
 

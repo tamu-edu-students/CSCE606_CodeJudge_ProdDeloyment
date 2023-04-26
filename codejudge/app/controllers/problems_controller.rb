@@ -15,11 +15,15 @@ class ProblemsController < ApplicationController
         # sorted_by: Problem.options_for_sorted_by,
         with_tag_id: Tag.options_for_select,
         with_difficulty_id: DifficultyLevel.options_for_select,
-        with_submission: ["solved", "unsolved", "wrong"]
+        # with_submission: ["solved", "unsolved", "wrong"]
       },
       persistence_id: "shared_key",
       default_filter_params: {},
-      available_filters: [:with_tag_id, :with_difficulty_id, :with_submission],
+      available_filters: [
+        :with_tag_id, 
+        :with_difficulty_id 
+        # :with_submission
+      ],
       sanitize_params: true,
     ) || return
 
@@ -211,8 +215,6 @@ class ProblemsController < ApplicationController
     @tags = Tag.all
     id = @problem.id
     @problem_tag = ProblemTag.where(problem_id: id).first
-
-    @problem_tag.difficulty_level_id = level_params
     @problem_tag.tag_id = tag_params
 
     @problem_tag.save
