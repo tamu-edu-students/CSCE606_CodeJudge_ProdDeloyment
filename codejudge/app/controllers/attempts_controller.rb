@@ -4,6 +4,7 @@ class AttemptsController < ApplicationController
   require 'pygments'
   before_action :set_attempt, only: %i[ show edit update destroy ]
   helper_method :get_net_score
+
   # GET /attempts or /attempts.json
   def index
     unless current_user.role? :admin
@@ -78,29 +79,45 @@ class AttemptsController < ApplicationController
       @attempt.passed = result
       respond_to do |format|
         if @attempt.save
-          correct_submissions = Attempt.where(user_id: @attempt.user_id, problem_id: @attempt.problem_id, passed: true).count
-          all_submissions = Attempt.where(user_id: @attempt.user_id, problem_id: @attempt.problem_id).count
+          correct_submissions = Attempt.where(problem_id: @attempt.problem_id, passed: true).distinct.count(:user_id)
+          all_submissions = Attempt.where(problem_id: @attempt.problem_id).distinct.count(:user_id)
           problem = Problem.find_by(id: params[:problem_id])
+          previous_difficulty = problem.difficulty
 
-          if all_submissions < 5
-            difficulty = 11
-          else
-            correct_ratio = correct_submissions.to_f / all_submissions
-            difficulty = case correct_ratio
-              when 0..0.05 then 10
-              when 0.05..0.1 then 9
-              when 0.1..0.15 then 8
-              when 0.15..0.2 then 7
-              when 0.2..0.25 then 6
-              when 0.25..0.3 then 5
-              when 0.3..0.35 then 4
-              when 0.35..0.4 then 3
-              when 0.4..0.45 then 2
-              else 1
-            end
+          correct_ratio = correct_submissions.to_f / all_submissions
+          difficulty = case correct_ratio
+            when 0..0.05 then 10
+            when 0.05..0.1 then 9
+            when 0.1..0.15 then 8
+            when 0.15..0.2 then 7
+            when 0.2..0.25 then 6
+            when 0.25..0.3 then 5
+            when 0.3..0.35 then 4
+            when 0.35..0.4 then 3
+            when 0.4..0.45 then 2
+            else 1
           end
 
           problem.update(difficulty: difficulty)
+
+          difficulty_map = {1 => 1, 2 => 2, 3 => 4, 4 => 8, 5 => 16, 6 => 32, 7 => 64, 8 => 128, 9 => 256, 10 => 512, 11 => 0}
+          if Attempt.where(user_id: @attempt.user_id, problem_id: @attempt.problem_id, passed: true).count == 1
+            user = User.where(id: @attempt.user_id).first
+            new_rating = user.rating
+            new_rating += difficulty_map[difficulty]
+            user.update(rating: new_rating)
+            end
+          if(previous_difficulty != difficulty)
+            p 'here'
+            users = User.joins(:attempts).where(attempts: { problem_id: @attempt.problem_id, passed: true }).distinct
+            users.each do |user|
+              new_rating = user.rating
+              new_rating -= difficulty_map[previous_difficulty]
+              new_rating += difficulty_map[difficulty]
+              user.update(rating: new_rating)
+            end
+          end
+
 
           format.html do
             if result
