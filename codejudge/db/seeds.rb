@@ -112,7 +112,7 @@ new_tags.each do |new_tag|
   )
 end
 
-Test Classes
+# Test Classes
 ruby_class = Group.create!(
   author_id: "a_1",
   group_title: "Ruby Class",
