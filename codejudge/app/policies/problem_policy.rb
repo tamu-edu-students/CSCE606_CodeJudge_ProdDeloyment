@@ -17,15 +17,15 @@ class ProblemPolicy < ApplicationPolicy
   end 
 
   def destroy?
-    user.role? :admin or user.role? :instructor or user.role? :ta 
+    user.role? :admin or ((user.role? :instructor or user.role? :ta) and (record.author_id.to_s == user.id.to_s))
   end 
 
   def update?
-    user.role? :admin or user.role? :instructor or user.role? :ta 
+    user.role? :admin or ((user.role? :instructor or user.role? :ta) and (record.author_id.to_s == user.id.to_s))
   end
 
   def edit?
-    user.role? :admin or user.role? :instructor or user.role? :ta 
+    user.role? :admin or ((user.role? :instructor or user.role? :ta) and (record.author_id.to_s == user.id.to_s))
   end 
 
   def index?

@@ -172,13 +172,14 @@ class ProblemsController < ApplicationController
     @tags = Tag.all
     @languages = Language.all
     @difficulty_levels = DifficultyLevel.all
-    authorize :problem
+    authorize @problem
     # @tags = Tag.all
   end
 
   # POST /problems or /problems.json
   def create
     @problem = Problem.new(problem_params)
+    @problem.author_id = session[:user_id]
     # @problem_tag = ProblemTag.new
     # @problem_level = DifficultyLevel.new
     # @problem_tag.tag_id = tag_params
@@ -214,7 +215,7 @@ class ProblemsController < ApplicationController
 
   # PATCH/PUT /problems/1 or /problems/1.json
   def update
-    authorize :problem
+    authorize @problem
     @tags = Tag.all
     id = @problem.id
     @problem_tag = ProblemTag.where(problem_id: id).first

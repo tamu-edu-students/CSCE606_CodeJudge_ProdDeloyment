@@ -54,10 +54,10 @@
   </section>
 <% end %>
 <div  class="layout-but">
-  <% if policy(:problem).edit? %>
+  <% if policy(@problem).edit? %>
     <%= link_to "Edit this Problem", edit_problem_path(@problem), :class => "button" %>
   <% end %> 
-  <% if policy(:problem).destroy? %>
+  <% if policy(@problem).destroy? %>
     <%= button_delete_modal_tag "Delete this Problem", @problem, "Problem", class: "button button--delete" %>
   <% end %>
 </div>

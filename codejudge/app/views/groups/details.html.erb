@@ -80,7 +80,7 @@
         <th colspan="2"></th>
         <th colspan="2"></th>
         <th colspan="2"></th>
-        <% if policy(:problem).new? %>
+        <% if policy(problem).new? %>
           <td><%= link_to 'Edit', edit_problem_path(problem) %></td>
           <td>
             <%= link_to 'Remove From Class', {:action=>"remove_problem_group", :controller=>"problem_groups", :id=> t.id} %>
