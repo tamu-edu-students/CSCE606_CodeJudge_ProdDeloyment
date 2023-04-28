@@ -103,20 +103,25 @@ class AttemptsController < ApplicationController
 
           problem.update(difficulty: difficulty)
 
-          difficulty_map = {1 => 1, 2 => 2, 3 => 4, 4 => 8, 5 => 16, 6 => 32, 7 => 64, 8 => 128, 9 => 256, 10 => 512, 11 => 0}
           if Attempt.where(user_id: @attempt.user_id, problem_id: @attempt.problem_id, passed: true).count == 1
             # first attempt for this problem
             user = User.where(id: @attempt.user_id).first
             new_rating = user.rating.nil? ? 0 : user.rating
-            new_rating += difficulty_map[previous_difficulty]
+            if previous_difficulty != 11
+              new_rating += 10 * previous_difficulty
+            end
             user.update(rating: new_rating)
             end
           if(previous_difficulty != difficulty)
             users = User.joins(:attempts).where(attempts: { problem_id: @attempt.problem_id, passed: true }).distinct
             users.each do |user|
               new_rating = user.rating
-              new_rating -= difficulty_map[previous_difficulty]
-              new_rating += difficulty_map[difficulty]
+              if previous_difficulty != 11
+                new_rating -= 10 * previous_difficulty
+              end
+              if difficulty != 11
+                new_rating += 10 * difficulty
+              end
               user.update(rating: new_rating)
             end
           end
