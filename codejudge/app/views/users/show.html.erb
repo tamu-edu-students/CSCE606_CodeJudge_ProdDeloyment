@@ -28,48 +28,52 @@
 
 <p>
   <strong>Submissions:</strong>
-  <div class="table col-12">
-    <table>
-      <thead>
-          <tr>
-              <th>Title</th>
-              <th colspan="3"></th>
-              <th>Tags</th>
-              <th colspan="3"></th>
-              <th>Difficulty</th>
-              <th colspan="3"></th>
-              <th>Language</th>
-              <th colspan="3"></th>
-              <th>Status</th>
-          </tr>
-      </thead>
-      <tbody>
-          <% @show_attempts.each do |attempt| %>
-              <tr id="notice2">
-                <td>
-                  <%= link_to Problem.find_by(id: attempt.problem_id).title, attempt , :id => 'probTitle'%>
-                </td>
+  <% if @show_attempts.empty? %>
+    <p>You have zero submissions.</p>
+  <% else %>
+    <div class="table col-12">
+      <table>
+        <thead>
+            <tr>
+                <th>Title</th>
                 <th colspan="3"></th>
-                <td>
-                  <%= link_to @map_tags[attempt.problem_id].to_s, attempt, :id => 'probTag' %>
-                </td>
+                <th>Tags</th>
                 <th colspan="3"></th>
-                <td>
-                  <%= link_to DifficultyLevel.find(Problem.find_by(id: attempt.problem_id).difficulty).level, attempt, :id => 'probDifficulty'  %>
-                </td>
+                <th>Difficulty</th>
                 <th colspan="3"></th>
-                <td>
-                  <%= link_to Language.find(Problem.find_by(id: attempt.problem_id).languages).pretty_name, attempt, :id => 'probLanguage'  %>
-                </td>
+                <th>Language</th>
                 <th colspan="3"></th>
-                <td>
-                  <%= content_tag :span, attempt.passed ? "PASSED" : "WA", style: "color: #{attempt.passed ? 'green' : 'red'};" %>
-                </td>
-              </tr>
-          <% end %>
-      </tbody>
-    </table>
-  </div>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% @show_attempts.each do |attempt| %>
+                <tr id="notice2">
+                  <td>
+                    <%= link_to Problem.find_by(id: attempt.problem_id).title, attempt , :id => 'probTitle'%>
+                  </td>
+                  <th colspan="3"></th>
+                  <td>
+                    <%= link_to @map_tags[attempt.problem_id].to_s, attempt, :id => 'probTag' %>
+                  </td>
+                  <th colspan="3"></th>
+                  <td>
+                    <%= link_to DifficultyLevel.find(Problem.find_by(id: attempt.problem_id).difficulty).level, attempt, :id => 'probDifficulty'  %>
+                  </td>
+                  <th colspan="3"></th>
+                  <td>
+                    <%= link_to Language.find(Problem.find_by(id: attempt.problem_id).languages).pretty_name, attempt, :id => 'probLanguage'  %>
+                  </td>
+                  <th colspan="3"></th>
+                  <td>
+                    <%= content_tag :span, attempt.passed ? "PASSED" : "WA", style: "color: #{attempt.passed ? 'green' : 'red'};" %>
+                  </td>
+                </tr>
+            <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% end %>
 </p>
 <!-- for attempt in @show_attempts do -->
 <style>
