@@ -23,7 +23,7 @@ class Grader
 
   def grade
     # header_token = "Token " + 
-    puts "grader"
+    puts "grader--------------------------------------------------------------------"
     @url = "https://glot.io/api/run/#{@language}/latest"
     @headers = {
       :content_type => :json,

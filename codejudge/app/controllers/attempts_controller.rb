@@ -58,6 +58,8 @@ class AttemptsController < ApplicationController
       language_id = language.id
 
       @attempt.code = File.read(params[:attempt][:sourcecode])
+      code_extension = File.extname(params[:attempt][:sourcecode])
+      code_language = Language.find_by(extension: code_extension)
       @attempt.user_id = session[:user_id]
       @attempt.problem_id = params[:problem_id]
       @attempt.language_id = language_id
@@ -68,7 +70,7 @@ class AttemptsController < ApplicationController
       result = true
       @testcases_query.each_with_index do |item, index|
         timeout = index*api_timeout
-        results = SubmitCodeJob.perform(item[0], item[1], language.name, @attempt.code, @testcases_query.index(item), current_user.id, @attempt.id)
+        results = SubmitCodeJob.perform(item[0], item[1], code_language.name, @attempt.code, @testcases_query.index(item), current_user.id, @attempt.id)
         puts results
         puts "working"
         result = result && results[:passed]
