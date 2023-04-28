@@ -4,6 +4,7 @@ class AttemptsController < ApplicationController
   require 'pygments'
   before_action :set_attempt, only: %i[ show edit update destroy ]
   helper_method :get_net_score
+
   # GET /attempts or /attempts.json
   def index
     unless current_user.role? :admin
@@ -62,12 +63,15 @@ class AttemptsController < ApplicationController
       code_language = Language.find_by(extension: code_extension)
       @attempt.user_id = session[:user_id]
       @attempt.problem_id = params[:problem_id]
-      @attempt.language_id = language_id
+      @attempt.language_id = code_language.id
       @attempt.save
       @testcases_query = TestCase.left_outer_joins(:problem).where(problem_id: @attempt.problem_id).map{ |r| [r.input, r.output]}
       puts @testcases_query
       api_timeout = 1
       result = true
+      # if @testcases_query.nil?
+      #
+      # end
       @testcases_query.each_with_index do |item, index|
         timeout = index*api_timeout
         results = SubmitCodeJob.perform(item[0], item[1], code_language.name, @attempt.code, @testcases_query.index(item), current_user.id, @attempt.id)
@@ -78,29 +82,50 @@ class AttemptsController < ApplicationController
       @attempt.passed = result
       respond_to do |format|
         if @attempt.save
-          correct_submissions = Attempt.where(user_id: @attempt.user_id, problem_id: @attempt.problem_id, passed: true).count
-          all_submissions = Attempt.where(user_id: @attempt.user_id, problem_id: @attempt.problem_id).count
+          correct_submissions = Attempt.where(problem_id: @attempt.problem_id, passed: true).distinct.count(:user_id)
+          all_submissions = Attempt.where(problem_id: @attempt.problem_id).distinct.count(:user_id)
           problem = Problem.find_by(id: params[:problem_id])
+          previous_difficulty = problem.difficulty
 
-          if all_submissions < 5
-            difficulty = 11
-          else
-            correct_ratio = correct_submissions.to_f / all_submissions
-            difficulty = case correct_ratio
-              when 0..0.05 then 10
-              when 0.05..0.1 then 9
-              when 0.1..0.15 then 8
-              when 0.15..0.2 then 7
-              when 0.2..0.25 then 6
-              when 0.25..0.3 then 5
-              when 0.3..0.35 then 4
-              when 0.35..0.4 then 3
-              when 0.4..0.45 then 2
-              else 1
-            end
+          correct_ratio = correct_submissions.to_f / all_submissions
+          difficulty = case correct_ratio
+            when 0..0.1 then 10
+            when 0.1..0.2 then 9
+            when 0.2..0.3 then 8
+            when 0.3..0.4 then 7
+            when 0.4..0.5 then 6
+            when 0.5..0.6 then 5
+            when 0.6..0.7 then 4
+            when 0.7..0.8 then 3
+            when 0.8..0.9 then 2
+            else 1
           end
 
           problem.update(difficulty: difficulty)
+
+          if Attempt.where(user_id: @attempt.user_id, problem_id: @attempt.problem_id, passed: true).count == 1
+            # first attempt for this problem
+            user = User.where(id: @attempt.user_id).first
+            new_rating = user.rating.nil? ? 0 : user.rating
+            if previous_difficulty != 11
+              new_rating += 10 * previous_difficulty
+            end
+            user.update(rating: new_rating)
+            end
+          if(previous_difficulty != difficulty)
+            users = User.joins(:attempts).where(attempts: { problem_id: @attempt.problem_id, passed: true }).distinct
+            users.each do |user|
+              new_rating = user.rating
+              if previous_difficulty != 11
+                new_rating -= 10 * previous_difficulty
+              end
+              if difficulty != 11
+                new_rating += 10 * difficulty
+              end
+              user.update(rating: new_rating)
+            end
+          end
+
 
           format.html do
             if result

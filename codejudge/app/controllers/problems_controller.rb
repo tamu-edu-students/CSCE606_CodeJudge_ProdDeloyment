@@ -99,16 +99,19 @@ class ProblemsController < ApplicationController
     @problem = Problem.where(id: params[:problem_id])
     puts @problem.inspect
     @user_id = session[:user_id]
-    language = Language.where(pretty_name: params[:language]).pick(:name)
-    language_id = Language.where(name: language).pick(:id)
+
+    # language = Language.where(pretty_name: params[:language]).pick(:name)
+    # language_id = Language.where(name: language).pick(:id)
     @solution_code = File.read(params[:solution_sourcecode])
-    @language_id = language_id
+    code_extension = File.extname(params[:solution_sourcecode])
+    language = Language.find_by(extension: code_extension)
+    # @language_id = language_id
     @testcases_query = TestCase.left_outer_joins(:problem).where(problem_id: @problem.first.id).map{ |r| [r.input, r.output]}
     api_timeout = 1
     passed = true
     @testcases_query.each_with_index do |item, index|
       timeout = index*api_timeout
-      @results = perform_instructor_solution(item[0], item[1], language, @solution_code, @testcases_query.index(item), current_user.id, 46)
+      @results = perform_instructor_solution(item[0], item[1], language.name, @solution_code, @testcases_query.index(item), current_user.id, 46)
       puts @results.inspect
       if !@results[:passed]
         passed = false
