@@ -63,12 +63,15 @@ class AttemptsController < ApplicationController
       code_language = Language.find_by(extension: code_extension)
       @attempt.user_id = session[:user_id]
       @attempt.problem_id = params[:problem_id]
-      @attempt.language_id = language_id
+      @attempt.language_id = code_language.id
       @attempt.save
       @testcases_query = TestCase.left_outer_joins(:problem).where(problem_id: @attempt.problem_id).map{ |r| [r.input, r.output]}
       puts @testcases_query
       api_timeout = 1
       result = true
+      # if @testcases_query.nil?
+      #
+      # end
       @testcases_query.each_with_index do |item, index|
         timeout = index*api_timeout
         results = SubmitCodeJob.perform(item[0], item[1], code_language.name, @attempt.code, @testcases_query.index(item), current_user.id, @attempt.id)
