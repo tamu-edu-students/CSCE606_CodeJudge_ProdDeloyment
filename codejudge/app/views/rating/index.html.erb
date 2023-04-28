@@ -23,7 +23,7 @@
       </tr>
     <% end %>
     <% @users_rating_na.each_with_index do |user, index| %>
-      <tr id="notice2" onclick="window.location.href='/users/<%= user.id %>';">
+      <tr id="notice2" onclick="window.location.href='/users/<%= user.id %>';" style="margin-bottom: 10px;">
         <td><%= index + 1 + @users.count %></td>
         <th colspan="3"></th>
         <td><%= user.username %></td>
@@ -34,3 +34,9 @@
     </tbody>
   </table>
 </div>
+
+<style>
+  td {
+    padding: 10px;
+  }
+</style>
