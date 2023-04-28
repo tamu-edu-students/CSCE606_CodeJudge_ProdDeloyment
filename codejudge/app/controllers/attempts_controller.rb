@@ -89,15 +89,15 @@ class AttemptsController < ApplicationController
 
           correct_ratio = correct_submissions.to_f / all_submissions
           difficulty = case correct_ratio
-            when 0..0.05 then 10
-            when 0.05..0.1 then 9
-            when 0.1..0.15 then 8
-            when 0.15..0.2 then 7
-            when 0.2..0.25 then 6
-            when 0.25..0.3 then 5
-            when 0.3..0.35 then 4
-            when 0.35..0.4 then 3
-            when 0.4..0.45 then 2
+            when 0..0.1 then 10
+            when 0.1..0.2 then 9
+            when 0.2..0.3 then 8
+            when 0.3..0.4 then 7
+            when 0.4..0.5 then 6
+            when 0.5..0.6 then 5
+            when 0.6..0.7 then 4
+            when 0.7..0.8 then 3
+            when 0.8..0.9 then 2
             else 1
           end
 
@@ -107,11 +107,10 @@ class AttemptsController < ApplicationController
           if Attempt.where(user_id: @attempt.user_id, problem_id: @attempt.problem_id, passed: true).count == 1
             user = User.where(id: @attempt.user_id).first
             new_rating = user.rating
-            new_rating += difficulty_map[difficulty]
+            new_rating += difficulty_map[previous_difficulty]
             user.update(rating: new_rating)
             end
           if(previous_difficulty != difficulty)
-            p 'here'
             users = User.joins(:attempts).where(attempts: { problem_id: @attempt.problem_id, passed: true }).distinct
             users.each do |user|
               new_rating = user.rating
