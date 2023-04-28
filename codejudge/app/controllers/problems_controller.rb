@@ -231,6 +231,9 @@ class ProblemsController < ApplicationController
     authorize @problem
 
     ProblemGroup.where(problem_id: @problem.id).destroy_all
+    ProblemTag.where(problem_id: @problem.id).destroy_all
+    Attempt.where(problem_id: @problem.id).destroy_all
+
     @problem.destroy
 
     respond_to do |format|
