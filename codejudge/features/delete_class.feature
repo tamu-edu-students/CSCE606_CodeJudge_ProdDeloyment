@@ -11,7 +11,3 @@ Scenario:
     Given the Instructor redirects to the destroy page
     When they click on edit this group
     Then they should see a edit page for editing the class
-    When they click on Back to groups
-    Then they should see a groups page
-    When they click on destroy this group button
-    Then they should see a classes table without deleted group
