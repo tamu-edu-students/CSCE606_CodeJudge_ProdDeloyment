@@ -25,7 +25,7 @@ capabilities = [
 browser = Selenium::WebDriver.for :chrome, capabilities: capabilities
 
 Before do |scenario|
-	@browser = browser
+	@browser = Selenium::WebDriver.for :chrome, capabilities: capabilities
 	@url = "http://127.0.0.1:3000/"
 end
 

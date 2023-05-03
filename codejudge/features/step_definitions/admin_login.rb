@@ -6,7 +6,7 @@ Given('the admin is on the login page') do
 end
 
 Given('the admin provides correct credentials') do
-  @browser.find_element(:id, "username").send_keys("test")
+  @browser.find_element(:id, "username").send_keys("praveen")
   @browser.find_element(:id, "password").send_keys("password")
 end
 
