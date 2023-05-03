@@ -1,6 +1,6 @@
 Given('the admin is authenticated') do
   @browser.navigate.to(@url)
-  @browser.find_element(:id, "username").send_keys("test")
+  @browser.find_element(:id, "username").send_keys("ritchey")
   @browser.find_element(:id, "password").send_keys("password")
   @browser.find_element(:id, "login_btn").click()
   sleep(1)
