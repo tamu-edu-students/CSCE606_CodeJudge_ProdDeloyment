@@ -111,13 +111,20 @@ class StudentGroupsController < ApplicationController
     end
 
     def addition_from
-      puts params
-      puts params[:email]
       @student_group_temp = StudentGroup.new
       @student_group_temp.group_id = params[:group_id]
-      @student_group_temp.user_id = get_user.first.id
-      puts @student_group_temp
-      @student_group_temp.save
+      user = get_user.first
+      if user
+        @student_group_temp.user_id = user.id
+      else
+        flash[:error] = "Failed to add student"
+        redirect_back(fallback_location: root_path)
+        return
+      end
+
+  if @student_group_temp.save
+    flash[:success] = "Student added successfully"
+  end
       redirect_back(fallback_location: root_path)
     end
     
