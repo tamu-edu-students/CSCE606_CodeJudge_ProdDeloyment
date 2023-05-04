@@ -1,10 +1,10 @@
-Feature: Test the user ranking table
+Feature: Test the user rating table
   Background: 
     Given the instructor has access to ratings page
     
-  Scenario: Verify the user ranking table contents
-    Given I am on the user ranking page
+  Scenario: Verify the student ratings
+    Given the instructor is on rating page
     Then the table should have the following contents
-    When I click on the username of the 3rd user in the table
-    Then I should be redirected to the user details page of the 3rd user
+    When the instructor clicks on the username of the 3rd student in the table
+    Then the instructor should be redirected to the student details page of the 3rd student
     

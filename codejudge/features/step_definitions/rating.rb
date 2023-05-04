@@ -6,7 +6,7 @@ Given('the instructor has access to ratings page') do
   sleep(1)
 end
 
-Given("I am on the user ranking page") do
+Given("the instructor is on rating page") do
   @browser.navigate.to @url + "rating/"
   puts "current_url" + @browser.current_url
 end
@@ -50,14 +50,14 @@ end
 
 
 
-When('I click on the username of the 3rd user in the table') do
-  user_index = 3
-  @browser.find_element(css: "tbody tr:nth-child(#{user_index}) td:nth-child(5)").click()
+When('the instructor clicks on the username of the 3rd student in the table') do
+  student_index = 3
+  @browser.find_element(css: "tbody tr:nth-child(#{student_index}) td:nth-child(5)").click()
 end
 
-Then('I should be redirected to the user details page of the 3rd user') do
-  user_index = 3
-  expected_url = @url + "users/#{user_index}"
+Then('the instructor should be redirected to the student details page of the 3rd student') do
+  student_index = 3
+  expected_url = @url + "users/#{student_index}"
   expect(@browser.current_url).to eq(expected_url)
 end
 
