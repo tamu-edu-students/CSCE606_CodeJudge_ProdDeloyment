@@ -86,6 +86,16 @@ class ProblemsController < ApplicationController
     @attempt = Attempt.new
     @visible_test_cases = @problem.visible_test_cases @problem, current_user.role
     @no_test_cases_prompt = current_user.role?(:student) ? "No example Test Cases provided." : "No Test Cases were specified for that Problem."
+    results = ActiveRecord::Base.connection.execute("
+        SELECT tags.tag
+        FROM problem_tags
+        JOIN tags ON problem_tags.tag_id = tags.id
+        WHERE problem_tags.problem_id = #{@problem.id}")
+    @tag_list = results.map { |row| row['tag'] }
+    if @tag_list.length == 0
+      @tag_list[0] = "No Tag Specified"
+    end
+    @tag_list = @tag_list.join(', ')
   end
 
   # def searchtag
@@ -207,12 +217,12 @@ class ProblemsController < ApplicationController
   # PATCH/PUT /problems/1 or /problems/1.json
   def update
     authorize @problem
-    @tags = Tag.all
-    id = @problem.id
-    @problem_tag = ProblemTag.where(problem_id: id).first
-    @problem_tag.tag_id = tag_params
+    # @tags = Tag.all
+    # id = @problem.id
+    # @problem_tag = ProblemTag.where(problem_id: id).first
+    # @problem_tag.tag_id = tag_params
 
-    @problem_tag.save
+    # @problem_tag.save
     if @problem.update(problem_params)
       redirect_to problems_path
     end
