@@ -226,12 +226,12 @@ class ProblemsController < ApplicationController
   # PATCH/PUT /problems/1 or /problems/1.json
   def update
     authorize @problem
-    @tags = Tag.all
-    id = @problem.id
-    @problem_tag = ProblemTag.where(problem_id: id).first
-    @problem_tag.tag_id = tag_params
+    # @tags = Tag.all
+    # id = @problem.id
+    # @problem_tag = ProblemTag.where(problem_id: id).first
+    # @problem_tag.tag_id = tag_params
 
-    @problem_tag.save
+    # @problem_tag.save
     if @problem.update(problem_params)
       redirect_to problems_path
     end
