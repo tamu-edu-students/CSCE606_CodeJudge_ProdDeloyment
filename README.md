@@ -10,13 +10,12 @@ TA :  Mayukh RoyChowdhury.
 
 #### Members of the project :
 
-1) Praveen Kumar Maddikuntla
-2) Nagarjuna Kolloju
-3) Nachiket Umesh Naganure
-4) Druva Kumar Gunda
-5) Anmol Anand
-6) Loksubhash Pulivarthi
-
+1) Anmol Anand
+2) Druva Kumar Gunda
+3) Loksubhash Pulivarthi
+4) Nachiket Umesh Naganure
+5) Nagarjuna Kolloju
+6) Praveen Kumar Maddikunta
 
 #### Proposed New Functionalities for this semester :
 
