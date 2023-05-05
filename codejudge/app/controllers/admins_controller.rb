@@ -3,7 +3,8 @@ class AdminsController < ApplicationController
 
   # GET /admins or /admins.json
   def index
-    # @admins = Admin.all
+    # @admins = User.where(id: Assignment.where(role_id: Role.find_by(name: "admin")).pluck(:user_id))
+    redirect_to users_path
   end
 
   # GET /admins/1 or /admins/1.json
