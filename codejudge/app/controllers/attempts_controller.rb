@@ -136,9 +136,9 @@ class AttemptsController < ApplicationController
 
           format.html do
             if result
-              redirect_to attempt_url(@attempt), notice: "All Test Cases are passed"
+              redirect_to attempt_url(@attempt), notice: "All test cases passed"
             else
-              redirect_to attempt_url(@attempt), notice: "Test Cases Failed"
+              redirect_to attempt_url(@attempt), notice: "Test cases failed"
             end
           end
           format.json { render :show, status: :created, location: @attempt }
