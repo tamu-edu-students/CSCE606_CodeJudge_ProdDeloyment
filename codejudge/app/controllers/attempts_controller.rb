@@ -38,7 +38,7 @@ class AttemptsController < ApplicationController
     p @graded_test_cases
     @error = nil
     @graded_test_cases_io = []
-    p @graded_test_cases[0][:stderr]
+    # p @graded_test_cases[0][:stderr]
     if @graded_test_cases.present? && @graded_test_cases[0][:stderr].present?
       # @grad_test_len = 1
       @error = @graded_test_cases[0][:stderr]
@@ -97,6 +97,7 @@ class AttemptsController < ApplicationController
       puts @testcases_query
       api_timeout = 1
       result = true
+      error = nil
       p "failing"
       if @testcases_query.nil?
         p "nil brp"
@@ -107,6 +108,7 @@ class AttemptsController < ApplicationController
         puts results
         puts "working"
         result = result && results[:passed]
+        error = results[:stderr]
       end
       @attempt.passed = result
       respond_to do |format|
@@ -157,7 +159,10 @@ class AttemptsController < ApplicationController
 
 
           format.html do
-            if result
+            if error.present?
+              redirect_to attempt_url(@attempt)
+              flash[:error] =  "Compilation Error"
+            elsif result
               redirect_to attempt_url(@attempt)
               flash[:notice] =  "All test cases passed"
             else
