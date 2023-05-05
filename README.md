@@ -69,7 +69,7 @@ brew install postgresql@14
          brew install redis
          brew services start redis
       ```
-    - Configure the followinf in cable.yml
+    - Configure the following in cable.yml
       ```
           # url: <%= ENV.fetch("REDIS_URL") { "redis://redis:6379/1" } %> # Comment original config line
             url: redis://localhost:6379/1
