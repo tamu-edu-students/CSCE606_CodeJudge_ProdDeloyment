@@ -62,6 +62,9 @@ class AttemptsController < ApplicationController
       code_extension = File.extname(params[:attempt][:sourcecode])
       code_language = Language.find_by(extension: code_extension)
       @attempt.user_id = session[:user_id]
+      if @attempt.user_id.nil?
+        @attempt.user_id = current_user.id
+      end
       @attempt.problem_id = params[:problem_id]
       @attempt.language_id = code_language.id
       @attempt.save

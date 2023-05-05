@@ -37,7 +37,7 @@ RSpec.describe ProblemGroupsController, type: :controller do
   describe 'check if problem group pair already exists' do
     it 'check for a flash warning' do
       post :add_problem_form, params: { group_id: Group.find_by(group_title: "software engineering").id, problem_title: "Array Sum" }
-      expect(flash[:warning]).to eq("Problem already in list!")
+      expect(flash[:error]).to eq("Problem already in list!")
     end
   end
 
