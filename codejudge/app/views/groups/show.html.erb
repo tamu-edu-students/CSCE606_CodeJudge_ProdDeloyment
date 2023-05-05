@@ -1,10 +1,97 @@
-<p style="color: green"><%= notice %></p>
+<style>
+  .notice {
+    /* background-color: #D1E7DD;
+    border: 1px solid #6CB2BA; */
+    color: #0C5449;
+    padding: 10px;
+  }
+
+  .group {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 20px;
+    margin-top:30px
+  }
+
+  .group__author {
+    margin-top: 0;
+    margin-bottom: 0;
+    font-size: 1.2rem;
+  }
+
+  .group__author strong {
+    margin-right: 5px;
+  }
+
+  .group__title {
+    margin-bottom: 5px;
+    font-size: 1.5rem;
+    text-align: center;
+  }
+
+  .group__title strong {
+    margin-right: 5px;
+  }
+
+  .group__description {
+    margin-bottom: 0;
+    font-size: 1.2rem;
+  }
+
+  .group__description strong {
+    margin-right: 5px;
+  }
+
+  .back-button {
+    background-color: #500000;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    cursor: pointer;
+  }
+
+  .edit-button {
+    background-color: #500000;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    cursor: pointer;
+  }
+
+  .destroy-button {
+    background-color: #500000;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    cursor: pointer;
+  }
+</style>
+
+
+<p class="notice"><%= notice %></p>
 
 <%= render @group %>
 
 <div>
-  <%= link_to "Edit this group", edit_group_path(@group) %> |
-  <%= link_to "Back to groups", groups_path %>
-
-  <%= button_to "Destroy this group", @group, method: :delete %>
-</di
+  <%= link_to "Back to groups", groups_path, class: "back-button" %>
+  <%= link_to "Edit this group", edit_group_path(@group), class: "edit-button" %>
+  <%= button_to "Destroy this group", @group, method: :delete, data: { confirm: "Are you sure?" }, class: "destroy-button" %>
+</div>
