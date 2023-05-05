@@ -1,4 +1,5 @@
 langs = [
+  ["none", "", "None"],
   ["assembly", ".as", "Assembly"],
   ["ats", ".dats", "ATS"],
   ["bash", ".sh", "Bash"],
