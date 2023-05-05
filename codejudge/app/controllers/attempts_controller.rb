@@ -54,13 +54,17 @@ class AttemptsController < ApplicationController
     puts "here2"
     @attempt = Attempt.new
     language = Language.find_by(pretty_name: params[:attempt][:language_list])
-
-    if language
-      language_id = language.id
+    code_extension = File.extname(params[:attempt][:sourcecode])
+    code_language = Language.find_by(extension: code_extension)
+    if code_language.nil?
+      notice_message = "File Extension not supported"
+    elsif language.id != code_language.id
+      notice_message = "Language Restriction is enforced. Submit in " + language.name
+    end
+      if code_language and language.id == code_language.id
 
       @attempt.code = File.read(params[:attempt][:sourcecode])
-      code_extension = File.extname(params[:attempt][:sourcecode])
-      code_language = Language.find_by(extension: code_extension)
+
       @attempt.user_id = session[:user_id]
       if @attempt.user_id.nil?
         @attempt.user_id = current_user.id
@@ -147,7 +151,8 @@ class AttemptsController < ApplicationController
       puts "here"
       # handle the case when the language is nil
       respond_to do |format|
-        format.html { render :new, status: :unprocessable_entity }
+        flash[:error] = "Problem already in list!"
+        format.html { redirect_to request.referer || root_path, status: :unprocessable_entity, notice: notice_message}
         format.json { render json: { error: "Language not found" }, status: :unprocessable_entity }
       end
     end
