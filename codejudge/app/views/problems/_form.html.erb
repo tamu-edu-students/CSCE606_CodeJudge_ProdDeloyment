@@ -20,7 +20,7 @@
   <%#= f.label "Tags" %>
   <%#= f.select :tags, options_from_collection_for_select(@tags, 'id', 'tag', f.object.tags), class: 'form-control col-md-7 col-xs-12', id: 'countries_select' %>
   <%= f.label "Language restriction" %>
-  <%= f.select :languages, options_from_collection_for_select(@languages, 'id', 'name', f.object.languages), class: 'form-control col-md-7 col-xs-12', id: 'countries_select' %>
+  <%= f.select :languages, options_from_collection_for_select(@languages, 'id', 'name', Language.find_by(name: 'none').id), class: 'form-control col-md-7 col-xs-12', id: 'countries_select' %>
 
   <%= f.fields_for :problem_tags do |problem_tag| %>
     <%= render "problem_tag_fields", f: problem_tag%>
