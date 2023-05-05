@@ -1,14 +1,112 @@
+<style>
+/* Style for notice */
+
+
+
+
+</style>
+
 <p style="color: green"><%= notice %></p>
+
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f7f7f7;
+    color: #333;
+  }
+
+  h1 {
+    font-size: 2.5rem;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  #groups {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+
+  .group {
+    border: 1px solid #ccc;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    width: 30%;
+    padding: 20px;
+  }
+
+  .group h2 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+  }
+
+  .group p {
+    font-size: 1.2rem;
+    margin-bottom: 5px;
+  }
+
+  .group a {
+    color: #333;
+    text-decoration: none;
+    font-weight: bold;
+  }
+
+  .group a:hover {
+    text-decoration: underline;
+  }
+
+  .new-group {
+    display: block;
+    text-align: center;
+    font-size: 1.2rem;
+    margin-top: 20px;
+  }
+
+  .new-group a {
+    color: #fff;
+    background-color: #500000;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+  }
+
+  .new-group a:hover {
+    background-color: #555;
+  }
+   .show-group-link {
+    display: inline-block;
+    background-color: peachpuff;
+    border: none;
+    color: #fff;
+    padding: 8px 16px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 14px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+
+  .show-group-link:hover {
+    background-color: peachpuff;
+  }
+</style>
 
 <h1>Groups</h1>
 
 <div id="groups">
   <% @groups.each do |group| %>
-    <%= render group %>
-    <p>
-      <%= link_to "Show this group", group %>
-    </p>
+    <div class="group">
+      <h2><%= group.group_title %></h2>
+      <p><strong>Author:</strong> <%= User.find_by(id: group.author_id).firstname.capitalize %> <%= User.find_by(id: group.author_id).lastname.capitalize %></p>
+      <p><strong>Description:</strong> <%= group.description %></p>
+      <p><%= link_to "Show this group", group,class: "show-group-link" %></p>
+    </div>
   <% end %>
 </div>
 
-<%= link_to "New group", new_group_path %>
+<div class="new-group">
+  <%= link_to "New group", new_group_path %>
+</div>
