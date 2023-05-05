@@ -61,7 +61,7 @@ class AttemptsController < ApplicationController
     elsif language.id != code_language.id
       notice_message = "Language Restriction is enforced. Submit in " + language.name
     end
-      if code_language and language.id == code_language.id
+      if code_language and (language.id == code_language.id or language.name == "none")
 
       @attempt.code = File.read(params[:attempt][:sourcecode])
 
