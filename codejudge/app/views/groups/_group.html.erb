@@ -1,17 +1,53 @@
-<div id="<%= dom_id group %>">
-  <p>
-    <strong>Author:</strong>
-    <%= group.author_id %>
-  </p>
+<style>
+  .group {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    transition: transform 0.2s ease-in-out;
+  }
 
-  <p>
-    <strong>Group title:</strong>
+  .group:hover {
+    transform: translateY(-5px);
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+  }
+
+  .group__title {
+    font-size: 2rem;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .group__author {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+  }
+
+  .group__description {
+    font-size: 1.2rem;
+    text-align: justify;
+  }
+</style>
+
+<div id="<%= dom_id group %>" class="group">
+  <p class="group__title">
     <%= group.group_title %>
   </p>
 
-  <p>
-    <strong>Description:</strong>
-    <%= group.description %>
+  <p class="group__author">
+    <strong>Author:</strong>
+    <%= User.find_by(id: group.author_id).firstname.capitalize %>
+    <%= User.find_by(id: group.author_id).lastname.capitalize %>
   </p>
 
+  <p class="group__description">
+    <strong>Description</strong><%= group.description %>
+  </p>
 </div>
