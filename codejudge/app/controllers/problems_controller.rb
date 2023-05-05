@@ -173,6 +173,12 @@ class ProblemsController < ApplicationController
     @tags = Tag.all
     @languages = Language.all
     @difficulty_levels = DifficultyLevel.all
+    results = ActiveRecord::Base.connection.execute("
+        SELECT tags.id
+        FROM problem_tags
+        JOIN tags ON problem_tags.tag_id = tags.id
+        WHERE problem_tags.problem_id = #{@problem.id}")
+    @tag_list = results.map { |row| row['id'] }
     authorize @problem
     # @tags = Tag.all
   end
@@ -223,6 +229,7 @@ class ProblemsController < ApplicationController
     # @problem_tag.tag_id = tag_params
 
     # @problem_tag.save
+
     if @problem.update(problem_params)
       redirect_to problems_path
     end
