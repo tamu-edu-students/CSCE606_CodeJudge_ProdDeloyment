@@ -81,6 +81,40 @@ class UsersController < ApplicationController
   def destroy
     authorize @user
     
+    ############################ Deleting user assignments ############################
+    Assignment.where(user_id: @user.id).destroy_all
+    
+    ############################ Deleting user from groups ############################
+    StudentGroup.where(user_id: @user.id).destroy_all
+
+    ############################ Deleting user attempts ############################
+    attempt_ids = Attempt.where(user_id: @user.id).pluck(:id)
+    Score.where(attempt_id: attempt_ids).destroy_all
+    Attempt.where(id: attempt_ids).destroy_all
+
+    ############################ Deleting authored problems ############################
+
+    authored_problems = Problem.where(author_id: @user.id).pluck(:id)
+
+    # delete dependent problem tags
+    ProblemTag.where(problem_id: authored_problems).destroy_all
+
+    # delete dependent problem groups
+    ProblemGroup.where(problem_id: authored_problems).destroy_all
+
+    # delete dependent problem attempts
+    attempt_ids = Attempt.where(problem_id: authored_problems).pluck(:id)
+    Score.where(attempt_id: attempt_ids).destroy_all
+    Attempt.where(id: attempt_ids).destroy_all
+
+    # delete dependent problem test cases
+    test_case_ids = TestCase.where(problem_id: authored_problems).pluck(:id)
+    Score.where(test_case_id: test_case_ids).destroy_all
+    TestCase.where(id: test_case_ids).destroy_all
+
+    Problem.where(id: authored_problems).destroy_all
+
+
     @user.destroy
 
     respond_to do |format|
