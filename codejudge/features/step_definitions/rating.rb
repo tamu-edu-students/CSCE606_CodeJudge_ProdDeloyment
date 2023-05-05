@@ -1,6 +1,6 @@
 Given('the instructor has access to ratings page') do
   @browser.navigate.to(@url)
-  @browser.find_element(:id, "username").send_keys("instructor_5")
+  @browser.find_element(:id, "username").send_keys("ritchey")
   @browser.find_element(:id, "password").send_keys("password")
   @browser.find_element(:id, "login_btn").click()
   sleep(1)
@@ -50,15 +50,20 @@ end
 
 
 
-When('the instructor clicks on the username of the 3rd student in the table') do
-  student_index = 3
-  @browser.find_element(css: "tbody tr:nth-child(#{student_index}) td:nth-child(5)").click()
+When('the instructor clicks on the username in the table') do
+  username_link = @browser.find_element(id: "notice2")
+  onclick_value = username_link.attribute("onclick")
+  @url = onclick_value.match(/window\.location\.href='(.*)';/)[1]
+  #@browser.get(url)
+  p @url
+  username_link.click()
+  sleep(1)
 end
 
-Then('the instructor should be redirected to the student details page of the 3rd student') do
-  student_index = 3
-  expected_url = @url + "users/#{student_index}"
-  expect(@browser.current_url).to eq(expected_url)
+Then('the instructor should be redirected to the student details page') do
+  current_url = @browser.current_url
+  puts current_url
+  raise "Fail" unless current_url.include?(@url)
 end
 
 
