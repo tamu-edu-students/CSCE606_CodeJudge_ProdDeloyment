@@ -1,5 +1,9 @@
 <div class="nested-fields test-case-card--edit">
   <%= f.label :tag_id %>
-  <%= f.select :tag_id, options_from_collection_for_select(@tags, 'id', 'tag', @tag_list[f.options[:child_index].to_i]), class: 'form-control col-md-7 col-xs-12', id: 'countries_select' %>
-  <%= link_to_remove_association "Remove Tag", f, class: "button" %>
+  <% if not @tag_list.nil? %>
+    <%=  f.select :tag_id, options_from_collection_for_select(@tags, 'id', 'tag', @tag_list[f.options[:child_index].to_i]), class: 'form-control col-md-7 col-xs-12', id: 'countries_select'  %>
+  <% else %>
+    <%=  f.select :tag_id, options_from_collection_for_select(@tags, 'id', 'tag'), class: 'form-control col-md-7 col-xs-12', id: 'countries_select'  %>
+<% end %>
+    <%= link_to_remove_association "Remove Tag", f, class: "button" %>
 </div>
