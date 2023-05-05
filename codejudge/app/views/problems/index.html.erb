@@ -1,9 +1,18 @@
 <p id="notice"><%= notice %></p>
 
 <div class="d-flex justify-content-center w-100">
-  <% if policy(:problem).new? %>
+  <% if Assignment.exists?(user_id: @user_id) %>
+  <% role_id = Assignment.find_by(user_id: @user_id).role_id %>
+  <% if role_id == Role.find_by(name: 'admin').id %>
+    <h1>Welcome Admin!</h1>
+  <% elsif role_id == Role.find_by(name: 'instructor').id %>
     <h1>Welcome Instructor!</h1>
+  <% elsif role_id == Role.find_by(name: 'student').id %>
+    <h1>Welcome Student!</h1>
+  <% else %>
+    <h1>Welcome!</h1>
   <% end %>
+<% end %>
 </div>
 
 

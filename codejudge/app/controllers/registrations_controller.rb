@@ -20,7 +20,9 @@ class RegistrationsController < ApplicationController
       @user.password_confirmation = user_params_4   
 
       @assignment = Assignment.new
-      if user_params_2 == "Instructor"
+      if user_params_2 == "Admin"
+        @assignment.role_id = 1
+      elsif user_params_2 == "Instructor"
         @assignment.role_id = 2
       else 
         @assignment.role_id = 4
