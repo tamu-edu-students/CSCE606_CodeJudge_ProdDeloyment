@@ -1,3 +1,4 @@
+# The following tests are for Iteration-2 Spring-2023
 Given('the admin is authenticated') do
   @browser.navigate.to(@url)
   @browser.find_element(:id, "username").send_keys("ritchey")
