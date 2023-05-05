@@ -31,8 +31,29 @@ class AttemptsController < ApplicationController
 
   # GET /attempts/1 or /attempts/1.json
   def show
+    p "herebro"
     @problem = @attempt.problem
+    p @attempt.id
     @graded_test_cases = Score.all.where(attempt_id: @attempt.id)
+    p @graded_test_cases
+    @error = nil
+    @graded_test_cases_io = []
+    p @graded_test_cases[0][:stderr]
+    if @graded_test_cases.present? && @graded_test_cases[0][:stderr].present?
+      # @grad_test_len = 1
+      @error = @graded_test_cases[0][:stderr]
+      p "working!!!!!!!!"
+    else
+      test_case_ids = @graded_test_cases.pluck(:test_case_id)
+      graded_tc = TestCase.all.where(id: test_case_ids)
+      graded_tc.each do |test_case|
+        # do something with test_case
+        # @graded_test_cases_io << [test_case[:input], test_case[:output]]
+        p "fix_here"
+        @graded_test_cases_io << [test_case[:input], test_case[:output]] if test_case.present?
+
+      end
+    end
     @number_graded_test_cases = @graded_test_cases.length
     @number_ungraded_test_cases = @problem.test_cases.length - @graded_test_cases.length
   end
@@ -76,9 +97,10 @@ class AttemptsController < ApplicationController
       puts @testcases_query
       api_timeout = 1
       result = true
-      # if @testcases_query.nil?
-      #
-      # end
+      p "failing"
+      if @testcases_query.nil?
+        p "nil brp"
+      end
       @testcases_query.each_with_index do |item, index|
         timeout = index*api_timeout
         results = SubmitCodeJob.perform(item[0], item[1], code_language.name, @attempt.code, @testcases_query.index(item), current_user.id, @attempt.id)

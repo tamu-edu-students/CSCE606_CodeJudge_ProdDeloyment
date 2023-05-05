@@ -1,0 +1,2 @@
+class ProblemSubmission < ApplicationRecord
+end

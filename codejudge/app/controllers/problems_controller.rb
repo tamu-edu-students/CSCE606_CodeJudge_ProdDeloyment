@@ -173,11 +173,12 @@ class ProblemsController < ApplicationController
     @tags = Tag.all
     @languages = Language.all
     @difficulty_levels = DifficultyLevel.all
-    results = ActiveRecord::Base.connection.execute("
-        SELECT tags.id
-        FROM problem_tags
-        JOIN tags ON problem_tags.tag_id = tags.id
-        WHERE problem_tags.problem_id = #{@problem.id}")
+    results = Tags.where(id: (ProblemTag.where(problem_id: params[:id]).pluck(:tag_id)))
+    # results = ActiveRecord::Base.connection.execute("
+    #     SELECT tags.id
+    #     FROM problem_tags
+    #     JOIN tags ON problem_tags.tag_id = tags.id
+    #     WHERE problem_tags.problem_id = #{@problem.id}")
     @tag_list = results.map { |row| row['id'] }
     authorize @problem
     # @tags = Tag.all
