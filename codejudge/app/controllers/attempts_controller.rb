@@ -137,10 +137,10 @@ class AttemptsController < ApplicationController
           format.html do
             if result
               redirect_to attempt_url(@attempt)
-              flash[:notice] =  "All Test Cases are passed"
+              flash[:notice] =  "All test cases passed"
             else
               redirect_to attempt_url(@attempt)
-              flash[:error] = "Test Cases Failed"
+              flash[:error] = "Test cases failed"
             end
           end
           format.json { render :show, status: :created, location: @attempt }
