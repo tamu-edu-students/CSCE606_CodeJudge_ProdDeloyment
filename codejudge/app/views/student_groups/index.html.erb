@@ -1,5 +1,9 @@
-<p style="color: green"><%= notice %></p>
-
+<!--<p style="color: <%#= error ? 'red' : 'green' %>"><%#= notice %></p>-->
+<% if notice.present? %>
+  <div style="color: <%= notice == 'class with given class code does not exist !' ? 'red' : 'green' %>;">
+    <%= notice %>
+  </div>
+<% end %>
 
 <h1>Class Details</h1>
 
