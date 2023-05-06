@@ -31,7 +31,6 @@ class AttemptsController < ApplicationController
 
   # GET /attempts/1 or /attempts/1.json
   def show
-    p "herebro"
     @problem = @attempt.problem
     p @attempt.id
     @graded_test_cases = Score.all.where(attempt_id: @attempt.id)
@@ -39,19 +38,21 @@ class AttemptsController < ApplicationController
     @error = nil
     @graded_test_cases_io = []
     # p @graded_test_cases[0][:stderr]
-    if @graded_test_cases.present? && @graded_test_cases[0][:stderr].present?
-      # @grad_test_len = 1
-      @error = @graded_test_cases[0][:stderr]
-      p "working!!!!!!!!"
-    else
-      test_case_ids = @graded_test_cases.pluck(:test_case_id)
-      graded_tc = TestCase.all.where(id: test_case_ids)
-      graded_tc.each do |test_case|
-        # do something with test_case
-        # @graded_test_cases_io << [test_case[:input], test_case[:output]]
-        p "fix_here"
-        @graded_test_cases_io << [test_case[:input], test_case[:output]] if test_case.present?
+    if @graded_test_cases.present?
+      if  @graded_test_cases[0][:stderr].present?
+        # @grad_test_len = 1
+        @error = @graded_test_cases[0][:stderr]
+        p "working!!!!!!!!"
+      else
+        test_case_ids = @graded_test_cases.pluck(:test_case_id)
+        graded_tc = TestCase.all.where(id: test_case_ids)
+        graded_tc.each do |test_case|
+          # do something with test_case
+          # @graded_test_cases_io << [test_case[:input], test_case[:output]]
+          p "fix_here"
+          @graded_test_cases_io << [test_case[:input], test_case[:output]] if test_case.present?
 
+        end
       end
     end
     @number_graded_test_cases = @graded_test_cases.length
@@ -76,6 +77,8 @@ class AttemptsController < ApplicationController
     @attempt = Attempt.new
     language = Language.find_by(pretty_name: params[:attempt][:language_list])
     code_extension = File.extname(params[:attempt][:sourcecode])
+    uploaded_file = params[:attempt][:sourcecode]
+    filename_with_ext = uploaded_file.original_filename
     code_language = Language.find_by(extension: code_extension)
     if code_language.nil?
       notice_message = "File Extension not supported"
@@ -85,30 +88,49 @@ class AttemptsController < ApplicationController
       if code_language and (language.id == code_language.id or language.name == "none")
 
       @attempt.code = File.read(params[:attempt][:sourcecode])
-
       @attempt.user_id = session[:user_id]
       if @attempt.user_id.nil?
         @attempt.user_id = current_user.id
       end
       @attempt.problem_id = params[:problem_id]
       @attempt.language_id = code_language.id
-      @attempt.save
       @testcases_query = TestCase.left_outer_joins(:problem).where(problem_id: @attempt.problem_id).map{ |r| [r.input, r.output]}
       puts @testcases_query
       api_timeout = 1
       result = true
       error = nil
+      @attempt.save
       p "failing"
-      if @testcases_query.nil?
-        p "nil brp"
-      end
-      @testcases_query.each_with_index do |item, index|
-        timeout = index*api_timeout
-        results = SubmitCodeJob.perform(item[0], item[1], code_language.name, @attempt.code, @testcases_query.index(item), current_user.id, @attempt.id)
-        puts results
-        puts "working"
+      puts @attempt.to_s
+      if @testcases_query.empty?
+        results = SubmitCodeJob.perform("", "", code_language.name, @attempt.code, -1, current_user.id, @attempt.id, filename_with_ext)
         result = result && results[:passed]
         error = results[:stderr]
+        @attempt.passed = result
+        @attempt.save
+        respond_to do |format|
+          format.html do
+            if error.present?
+              redirect_to attempt_url(@attempt)
+              flash[:error] =  "Compilation Error"
+            elsif result
+              redirect_to attempt_url(@attempt)
+              flash[:notice] =  "Compilation Successful. No test cases were available for this problem"
+            else
+              redirect_to attempt_url(@attempt)
+              flash[:error] = "Test cases failed"
+            end
+          end
+        end
+        return
+      else
+
+        @testcases_query.each_with_index do |item, index|
+          timeout = index*api_timeout
+          results = SubmitCodeJob.perform(item[0], item[1], code_language.name, @attempt.code, @testcases_query.index(item), current_user.id, @attempt.id, filename_with_ext)
+          result = result && results[:passed]
+          error = results[:stderr]
+        end
       end
       @attempt.passed = result
       respond_to do |format|
@@ -156,7 +178,7 @@ class AttemptsController < ApplicationController
               user.update(rating: new_rating)
             end
           end
-
+          p "working here 2"
 
           format.html do
             if error.present?

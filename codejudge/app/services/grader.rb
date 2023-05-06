@@ -12,13 +12,14 @@ class Grader
 
   @@glot_api_token = ENV["GLOT_KEY"]
 
-  def initialize(testcases, language, code, current_user, current_attempt)
+  def initialize(testcases, language, code, current_user, current_attempt, filename)
     @testcases = testcases
     @language = language
     @extension = Language.where(name: @language).pick(:extension)
     @code = code
     @current_user = current_user
     @current_attempt = current_attempt
+    @filename = filename
   end
 
   def grade
@@ -39,7 +40,7 @@ class Grader
         stdin: key,
         files: [
           {
-            name: "main#{@extension}",
+            name: @filename,
             content: @code
           }
         ]
@@ -51,15 +52,26 @@ class Grader
       decoded_response = JSON.parse(response.body)
       puts value
       puts decoded_response['stdout'].strip
-      @passed = decoded_response['stdout'].strip == value.to_s ? true : false
+
+      # @passed = decoded_response['stdout'].strip == value.to_s ? true : false
       @stdout = decoded_response['stdout']
       @stderr = decoded_response['stderr']
+      #If No test case passed = true based on stderr
+      if value == "" and key == ""
+        if @stderr == ""
+          @passed = true
+        else
+          @passed =  false
+        end
+      else
+        @passed = decoded_response['stdout'].strip == value.to_s ? true : false
+        @testcase = TestCase.where(input: key).first()
+        @attempt = Attempt.find(@current_attempt)
+        p "Score created"
+        Score.create!(passed: @passed, stdout: @stdout, stderr: @stderr, attempt: @attempt, test_case: @testcase)
+      end
       p @stderr
-      @testcase = TestCase.where(input: key).first()
-
-      @attempt = Attempt.find(@current_attempt)
-      p "Score created"
-      Score.create!(passed: @passed, stdout: @stdout, stderr: @stderr, attempt: @attempt, test_case: @testcase)
+      #
 
     
       return {passed: @passed, stdout: @stdout, stderr: @stderr}

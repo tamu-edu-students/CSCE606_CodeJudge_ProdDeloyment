@@ -43,7 +43,8 @@ class ApplicationController < ActionController::Base
 
     current_user = args[5]
     current_attempt = args[6]
-    grader = Grader.new(@testcase,language,code,current_user, current_attempt)
+    filename = args[7]
+    grader = Grader.new(@testcase,language,code,current_user, current_attempt, filename)
 
     results = grader.grade_dont_save
     return results

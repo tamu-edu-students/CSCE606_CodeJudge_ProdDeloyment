@@ -24,11 +24,16 @@
         <%= render "partials/test_case_card", passed: test_case.passed, finished_at: test_case.created_at, test_case_input: io[0], test_case_output: io[1] %>
         </div>
       <% end %>
+    <% elsif @error.present? %>
+      <div  class="col-12 col-md-4">
+        <%= render "partials/test_case_card_err", passed: false , error: @error  %>
+      </div>
     <% else %>
       <div  class="col-12 col-md-4">
-      <%= render "partials/test_case_card_err", passed: false , error: @error  %>
+        <%= render "partials/test_case_card_err", passed: @attempt.passed , error: nil  %>
       </div>
     <% end %>
+
 
 
 
