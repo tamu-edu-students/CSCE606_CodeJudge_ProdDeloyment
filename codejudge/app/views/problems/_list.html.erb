@@ -39,7 +39,7 @@
               <th colspan="3"></th>
               <td>
                 <% if @map_attempted.include?(problem.id) %>
-                  <%= content_tag :span, (@map_passed.include?(problem.id) ? "PASSED" : "WA"), style: (@map_passed.include?(problem.id) ? "color: green;" : "color: red;") %>
+                  <%= content_tag :span, (@map_passed.include?(problem.id) ? "PASSED" : "WRONG ANSWER"), style: (@map_passed.include?(problem.id) ? "color: green;" : "color: red;") %>
                 <% else %>
                   <%= content_tag :span, "-", style: "color: gray;" %>
                 <% end %>
