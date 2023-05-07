@@ -13,6 +13,9 @@
       <thead>
         <tr>
           <th>Created</th>
+          <% if current_user.username == 'admin' %>
+            <th> Username </th>
+          <% end %>
           <th>Title</th>
           <th>Tags</th>
           <th>Difficulty</th>
@@ -27,6 +30,9 @@
         <% @attempts.each do |attempt| %>
         <tr>
           <td><%= link_to attempt.created_at, attempt, data: {turbo: false} %></td>
+          <% if current_user.username == 'admin' %>
+            <td><%= link_to User.find(attempt.user_id).username, user_path(attempt.user_id), data: {turbo: false} %></td>
+          <% end %>
           <td><%= link_to attempt.problem.title, attempt, data: {turbo: false} %></td>
           <td><%= link_to @map_tags[attempt.problem_id].to_s, attempt, :id => 'probTag' %></td>
           <td>
