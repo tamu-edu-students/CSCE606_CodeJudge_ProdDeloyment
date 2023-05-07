@@ -84,6 +84,7 @@ class ProblemsController < ApplicationController
   def show
     @languages_list = Language.where(id: @problem.languages).pluck(:pretty_name)
     @attempt = Attempt.new
+    @solution_exists = Attempt.exists?(user_id: session[:user_id], problem_id: @problem.id, passed: true)
     @visible_test_cases = @problem.visible_test_cases @problem, current_user.role
     @no_test_cases_prompt = current_user.role?(:student) ? "No example Test Cases provided." : "No Test Cases were specified for that Problem."
     results = ActiveRecord::Base.connection.execute("
