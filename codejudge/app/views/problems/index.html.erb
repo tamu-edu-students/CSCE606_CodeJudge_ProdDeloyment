@@ -1,4 +1,4 @@
-<p id="notice"><%= notice %></p>
+<%= render 'layouts/flash' %>
 
 <div class="d-flex justify-content-center w-100">
   <% if Assignment.exists?(user_id: @user_id) %>

@@ -210,7 +210,8 @@ class ProblemsController < ApplicationController
           if @problem.save
             # @problem_tag.problem_id = @problem.id
             # if @problem_tag.save!
-              format.html { redirect_to problem_url(@problem), notice: "Problem was successfully created." }
+              flash[:success] = "Problem was successfully created"
+              format.html { redirect_to problem_url(@problem)}
               format.json { render :show, status: :created, location: @problem }
             # end
           else
@@ -248,7 +249,8 @@ class ProblemsController < ApplicationController
     @problem.destroy
 
     respond_to do |format|
-      format.html { redirect_to problems_url, notice: "Problem was successfully destroyed." }
+      flash[:success] = "Problem was successfully destroyed."
+      format.html { redirect_to problems_url}
       format.json { head :no_content }
     end
   end

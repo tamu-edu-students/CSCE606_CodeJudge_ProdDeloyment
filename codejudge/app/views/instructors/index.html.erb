@@ -1,4 +1,4 @@
-<p id="notice"><%= notice %></p>
+<%= render 'layouts/flash' %>
 
 <h1>Welcome Instructor!</h1>
 <div id="classes_list_table" class="table col-12">
@@ -13,7 +13,7 @@
     <tbody>
     <% for group in @groups %>
       <tr>
-        <td class="grouptitle"><b><%=link_to group.group_title, details_group_url(group.id)%></b></td>
+        <td class="grouptitle"><%=link_to group.group_title, details_group_url(group.id)%></td>
         <td><b><%=link_to group.classcode, details_group_url(group.id)%></b></td>
         <th colspan="2"></th>
         <td><%= link_to "Modify", edit_group_path(group) %></td>

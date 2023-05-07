@@ -1,6 +1,7 @@
-<% if flash[:success] %>
+<div style="display: flex; align-items: center; justify-content: center; height: 100%;">
+  <% if flash[:success] %>
     <p style="color: green"><%= flash[:success] %></p>
-
-<% elsif flash[:error] %>
-  <p style="color: red"><%= flash[:error] %></p>
-<% end %>
+  <% elsif flash[:error] %>
+    <p style="color: red"><%= flash[:error] %></p>
+  <% end %>
+</div>

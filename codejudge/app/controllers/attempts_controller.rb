@@ -81,132 +81,145 @@ class AttemptsController < ApplicationController
     filename_with_ext = uploaded_file.original_filename
     code_language = Language.find_by(extension: code_extension)
     if code_language.nil?
-      notice_message = "File Extension not supported"
+      flash[:error] = "File Extension not supported"
+      respond_to do |format|
+        # flash[:error] = "Problem already in list!"
+        format.html { redirect_to request.referer || root_path, status: :unprocessable_entity}
+        format.json { render json: { error: "Language not found" }, status: :unprocessable_entity }
+      end
     elsif language.id != code_language.id
-      notice_message = "Language Restriction is enforced. Submit in " + language.name
-    end
+      flash[:error] = "Language Restriction is enforced. Submit in " + language.name
+      respond_to do |format|
+        # flash[:error] = "Problem already in list!"
+        format.html { redirect_to request.referer || root_path, status: :unprocessable_entity}
+        format.json { render json: { error: "Language not found" }, status: :unprocessable_entity }
+      end
+    else
       if code_language and (language.id == code_language.id or language.name == "none")
 
-      @attempt.code = File.read(params[:attempt][:sourcecode])
-      @attempt.user_id = session[:user_id]
-      if @attempt.user_id.nil?
-        @attempt.user_id = current_user.id
-      end
-      @attempt.problem_id = params[:problem_id]
-      @attempt.language_id = code_language.id
-      @testcases_query = TestCase.left_outer_joins(:problem).where(problem_id: @attempt.problem_id).map{ |r| [r.input, r.output]}
-      puts @testcases_query
-      api_timeout = 1
-      result = true
-      error = nil
-      @attempt.save
-      p "failing"
-      puts @attempt.to_s
-      if @testcases_query.empty?
-        results = SubmitCodeJob.perform("", "", code_language.name, @attempt.code, -1, current_user.id, @attempt.id, filename_with_ext)
-        result = result && results[:passed]
-        error = results[:stderr]
-        @attempt.passed = result
-        @attempt.save
-        respond_to do |format|
-          format.html do
-            if error.present?
-              redirect_to attempt_url(@attempt)
-              flash[:error] =  "Compilation Error"
-            elsif result
-              redirect_to attempt_url(@attempt)
-              flash[:notice] =  "Compilation Successful. No test cases were available for this problem"
-            else
-              redirect_to attempt_url(@attempt)
-              flash[:error] = "Test cases failed"
-            end
-          end
+        @attempt.code = File.read(params[:attempt][:sourcecode])
+        @attempt.user_id = session[:user_id]
+        if @attempt.user_id.nil?
+          @attempt.user_id = current_user.id
         end
-        return
-      else
-
-        @testcases_query.each_with_index do |item, index|
-          timeout = index*api_timeout
-          results = SubmitCodeJob.perform(item[0], item[1], code_language.name, @attempt.code, @testcases_query.index(item), current_user.id, @attempt.id, filename_with_ext)
+        @attempt.problem_id = params[:problem_id]
+        @attempt.language_id = code_language.id
+        @testcases_query = TestCase.left_outer_joins(:problem).where(problem_id: @attempt.problem_id).map{ |r| [r.input, r.output]}
+        puts @testcases_query
+        api_timeout = 1
+        result = true
+        error = nil
+        @attempt.save
+        p "failing"
+        puts @attempt.to_s
+        if @testcases_query.empty?
+          results = SubmitCodeJob.perform("", "", code_language.name, @attempt.code, -1, current_user.id, @attempt.id, filename_with_ext)
           result = result && results[:passed]
           error = results[:stderr]
-        end
-      end
-      @attempt.passed = result
-      respond_to do |format|
-        if @attempt.save
-          correct_submissions = Attempt.where(problem_id: @attempt.problem_id, passed: true).distinct.count(:user_id)
-          all_submissions = Attempt.where(problem_id: @attempt.problem_id).distinct.count(:user_id)
-          problem = Problem.find_by(id: params[:problem_id])
-          previous_difficulty = problem.difficulty
-
-          correct_ratio = correct_submissions.to_f / all_submissions
-          difficulty = case correct_ratio
-            when 0..0.1 then 10
-            when 0.1..0.2 then 9
-            when 0.2..0.3 then 8
-            when 0.3..0.4 then 7
-            when 0.4..0.5 then 6
-            when 0.5..0.6 then 5
-            when 0.6..0.7 then 4
-            when 0.7..0.8 then 3
-            when 0.8..0.9 then 2
-            else 1
-          end
-
-          problem.update(difficulty: difficulty)
-
-          if Attempt.where(user_id: @attempt.user_id, problem_id: @attempt.problem_id, passed: true).count == 1
-            # first attempt for this problem
-            user = User.where(id: @attempt.user_id).first
-            new_rating = user.rating.nil? ? 0 : user.rating
-            if previous_difficulty != 11
-              new_rating += 10 * previous_difficulty
-            end
-            user.update(rating: new_rating)
-            end
-          if(previous_difficulty != difficulty)
-            users = User.joins(:attempts).where(attempts: { problem_id: @attempt.problem_id, passed: true }).distinct
-            users.each do |user|
-              new_rating = user.rating
-              if previous_difficulty != 11
-                new_rating -= 10 * previous_difficulty
+          @attempt.passed = result
+          @attempt.save
+          respond_to do |format|
+            format.html do
+              if error.present?
+                redirect_to attempt_url(@attempt)
+                flash[:error] =  "Compilation Error"
+              elsif result
+                redirect_to attempt_url(@attempt)
+                flash[:success] =  "Compilation Successful. No test cases were available for this problem"
+              else
+                redirect_to attempt_url(@attempt)
+                flash[:error] = "Test cases failed"
               end
-              if difficulty != 11
-                new_rating += 10 * difficulty
+            end
+          end
+          return
+        else
+
+          @testcases_query.each_with_index do |item, index|
+            timeout = index*api_timeout
+            results = SubmitCodeJob.perform(item[0], item[1], code_language.name, @attempt.code, @testcases_query.index(item), current_user.id, @attempt.id, filename_with_ext)
+            result = result && results[:passed]
+            error = results[:stderr]
+          end
+        end
+        @attempt.passed = result
+        respond_to do |format|
+          if @attempt.save
+            correct_submissions = Attempt.where(problem_id: @attempt.problem_id, passed: true).distinct.count(:user_id)
+            all_submissions = Attempt.where(problem_id: @attempt.problem_id).distinct.count(:user_id)
+            problem = Problem.find_by(id: params[:problem_id])
+            previous_difficulty = problem.difficulty
+
+            correct_ratio = correct_submissions.to_f / all_submissions
+            difficulty = case correct_ratio
+                         when 0..0.1 then 10
+                         when 0.1..0.2 then 9
+                         when 0.2..0.3 then 8
+                         when 0.3..0.4 then 7
+                         when 0.4..0.5 then 6
+                         when 0.5..0.6 then 5
+                         when 0.6..0.7 then 4
+                         when 0.7..0.8 then 3
+                         when 0.8..0.9 then 2
+                         else 1
+                         end
+
+            problem.update(difficulty: difficulty)
+
+            if Attempt.where(user_id: @attempt.user_id, problem_id: @attempt.problem_id, passed: true).count == 1
+              # first attempt for this problem
+              user = User.where(id: @attempt.user_id).first
+              new_rating = user.rating.nil? ? 0 : user.rating
+              if previous_difficulty != 11
+                new_rating += 10 * previous_difficulty
               end
               user.update(rating: new_rating)
             end
-          end
-          p "working here 2"
-
-          format.html do
-            if error.present?
-              redirect_to attempt_url(@attempt)
-              flash[:error] =  "Compilation Error"
-            elsif result
-              redirect_to attempt_url(@attempt)
-              flash[:notice] =  "All test cases passed"
-            else
-              redirect_to attempt_url(@attempt)
-              flash[:error] = "Test cases failed"
+            if(previous_difficulty != difficulty)
+              users = User.joins(:attempts).where(attempts: { problem_id: @attempt.problem_id, passed: true }).distinct
+              users.each do |user|
+                new_rating = user.rating
+                if previous_difficulty != 11
+                  new_rating -= 10 * previous_difficulty
+                end
+                if difficulty != 11
+                  new_rating += 10 * difficulty
+                end
+                user.update(rating: new_rating)
+              end
             end
+            p "working here 2"
+
+            format.html do
+              if error.present?
+                redirect_to attempt_url(@attempt)
+                flash[:error] =  "Compilation Error"
+              elsif result
+                redirect_to attempt_url(@attempt)
+                flash[:success] =  "All test cases passed"
+              else
+                redirect_to attempt_url(@attempt)
+                flash[:error] = "Test cases failed"
+              end
+            end
+            format.json { render :show, status: :created, location: @attempt }
+          else
+            format.html { render :new, status: :unprocessable_entity }
+            format.json { render json: @attempt.errors, status: :unprocessable_entity }
           end
-          format.json { render :show, status: :created, location: @attempt }
-        else
-          format.html { render :new, status: :unprocessable_entity }
-          format.json { render json: @attempt.errors, status: :unprocessable_entity }
+
+        end
+      else
+        puts "here"
+        # handle the case when the language is nil
+        respond_to do |format|
+          # flash[:error] = "Problem already in list!"
+          format.html { redirect_to request.referer || root_path, status: :unprocessable_entity}
+          format.json { render json: { error: "Language not found" }, status: :unprocessable_entity }
         end
       end
-    else
-      puts "here"
-      # handle the case when the language is nil
-      respond_to do |format|
-        flash[:error] = "Problem already in list!"
-        format.html { redirect_to request.referer || root_path, status: :unprocessable_entity, notice: notice_message}
-        format.json { render json: { error: "Language not found" }, status: :unprocessable_entity }
-      end
     end
+
   end
 
 
@@ -214,7 +227,7 @@ class AttemptsController < ApplicationController
   def update
     respond_to do |format|
       if @attempt.update(attempt_params)
-        format.html { redirect_to attempt_url(@attempt), notice: "Attempt was successfully updated." }
+        format.html { redirect_to attempt_url(@attempt), flash[:notice] = "Attempt was successfully updated." }
         format.json { render :show, status: :ok, location: @attempt }
       else
         format.html { render :edit, status: :unprocessable_entity }
@@ -228,7 +241,7 @@ class AttemptsController < ApplicationController
     @attempt.destroy
 
     respond_to do |format|
-      format.html { redirect_to attempts_url, notice: "Attempt was successfully destroyed." }
+      format.html { redirect_to attempts_url, flash[:notice] = "Attempt was successfully destroyed." }
       format.json { head :no_content }
     end
   end

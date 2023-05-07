@@ -21,7 +21,8 @@ class WelcomeController < ApplicationController
       if user.present? && user.authenticate(params[:password])
         logged_in = true
       else
-        redirect_to root_path, notice: "Incorrect username or password"
+        flash[:error] = "Incorrect username or password"
+        redirect_to root_path
       end
     end
 
@@ -32,12 +33,15 @@ class WelcomeController < ApplicationController
       puts 'printing'
       puts role
       if role == 1
-        redirect_to admins_path, notice: 'Logged in admin successfully'
+        flash[:success] = 'Logged in admin successfully'
+        redirect_to admins_path
       end
       if role == 2
-        redirect_to instructors_path, notice: 'Logged in instructor successfully'
+        flash[:success] = 'Logged in instructor successfully'
+        redirect_to instructors_path
       end
       if role == 4
+        flash[:success] = 'Logged in student successfully'
           redirect_to problems_path, notice: 'Logged in student successfully'
       end
     end
