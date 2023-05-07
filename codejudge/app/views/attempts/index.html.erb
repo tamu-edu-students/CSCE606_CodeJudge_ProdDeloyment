@@ -34,8 +34,13 @@
           </td>
           <td><%= link_to Language.find(Problem.find_by(id: attempt.problem_id).languages).pretty_name, attempt, :id => 'probLanguage'  %></td>
           <td class="<%= attempt_status(attempt) ? "success" : "error" %>">
-            <strong><%= link_to attempt_status_string(attempt), attempt, data: {turbo: false}%></strong>
-          </td>
+            <% stat = attempt_status_string(attempt) %>
+            <% if stat == "Failed" %>
+             <strong style="color: red"><%= link_to attempt_status_string(attempt), attempt, data: {turbo: false}%></strong>
+              <% else %>
+              <strong><%= link_to attempt_status_string(attempt), attempt, data: {turbo: false}%></strong>
+            <% end %>
+              </td>
           <% if policy(:attempt).new? %>
             <td>
               <%= button_delete_modal_tag "Delete", attempt, "Attempt" %>
