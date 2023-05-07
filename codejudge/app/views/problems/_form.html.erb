@@ -20,13 +20,10 @@
   <%#= f.label "Tags" %>
   <%#= f.select :tags, options_from_collection_for_select(@tags, 'id', 'tag', f.object.tags), class: 'form-control col-md-7 col-xs-12', id: 'countries_select' %>
   <%= f.label "Language restriction" %>
-  <% lang_id = Language.find_by(name: 'none').id %>
-  <% if @problem.languages != lang_id %>
-    <% lang_id = @problem.languages.to_i %>
-  <% end %>
+  <% lang_id = @problem.languages == Language.find_by(name: "none").id ? Language.first.id : @problem.languages.to_i %>
   <%= f.select :languages, options_from_collection_for_select(@languages, 'id', 'name', lang_id), class: 'form-control col-md-7 col-xs-12', id: 'countries_select' %>
 
-  <%= f.fields_for :problem_tags do |problem_tag| %>
+  <%= f.fields_for :problem_tags do |problem_tag| %>x
     <%= render "problem_tag_fields", f: problem_tag%>
   <% end %>
   <div>

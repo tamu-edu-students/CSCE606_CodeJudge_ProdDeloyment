@@ -8,7 +8,8 @@
   </div>
   <span class="test-case-card__separator"></span>
   <p class="test-case-card__copy"><%= finished_at if defined?(finished_at) %></p>
-  <p class="test-case-card__copy"><%= "Inp: " + test_case_input %></p>
-  <p class="test-case-card__copy"><%= "Out: " + test_case_output %></p>
+  <p class="test-case-card__copy"><strong>Input:  </strong><%= test_case_input %></p>
+  <p class="test-case-card__copy"><strong>Expected Output:  </strong><%= test_case_output %></p>
+
 
 </div>
