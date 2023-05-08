@@ -65,7 +65,7 @@ class Grader
         end
       else
         @passed = decoded_response['stdout'].strip == value.to_s ? true : false
-        @testcase = TestCase.where(input: key).first()
+        @testcase = TestCase.where(input: key, output: value).first()
         @attempt = Attempt.find(@current_attempt)
         p "Score created"
         Score.create!(passed: @passed, stdout: @stdout, stderr: @stderr, attempt: @attempt, test_case: @testcase)
