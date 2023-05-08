@@ -234,6 +234,7 @@ class ProblemsController < ApplicationController
     # @problem_tag.save
 
     if @problem.update(problem_params)
+      flash[:success] = "Problem was updated successfully"
       redirect_to problems_path
     end
   end
