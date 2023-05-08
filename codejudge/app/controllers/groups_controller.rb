@@ -39,6 +39,7 @@ class GroupsController < ApplicationController
     @group.classcode = generate_activation_code
 
       if @group.save
+        flash[:success] = "Class group was successfully created."
         redirect_to instructors_path
       end
   end
@@ -47,6 +48,7 @@ class GroupsController < ApplicationController
   def update
     
       if @group.update(group_params)
+        flash[:success] = "Class group was successfully updated."
         redirect_to instructors_path
       end
   end
@@ -56,6 +58,7 @@ class GroupsController < ApplicationController
     ProblemGroup.where(group_id: @group.id).destroy_all
     @group.destroy
     respond_to do |format|
+      flash[:success] = "Class group was successfully destroyed."
       format.html { redirect_to instructors_path, notice: "class group was successfully destroyed." }
       format.json { head :no_content }
     end
