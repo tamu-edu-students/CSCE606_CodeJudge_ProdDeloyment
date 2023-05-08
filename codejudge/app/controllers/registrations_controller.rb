@@ -35,7 +35,8 @@ class RegistrationsController < ApplicationController
       puts @assignment.user_id
       if @assignment.save!
         puts "asdf"
-        redirect_to root_path, notice: 'Successfully created account'
+        flash[:success] = 'Successfully created account'
+        redirect_to root_path
       else
        render :new
       end
