@@ -84,6 +84,7 @@ class ProblemsController < ApplicationController
   def show
     @languages_list = Language.where(id: @problem.languages).pluck(:pretty_name)
     @attempt = Attempt.new
+    @solution_exists = Attempt.exists?(user_id: session[:user_id], problem_id: @problem.id, passed: true)
     @visible_test_cases = @problem.visible_test_cases @problem, current_user.role
     @no_test_cases_prompt = current_user.role?(:student) ? "No example Test Cases provided." : "No Test Cases were specified for that Problem."
     results = ActiveRecord::Base.connection.execute("
@@ -209,7 +210,8 @@ class ProblemsController < ApplicationController
           if @problem.save
             # @problem_tag.problem_id = @problem.id
             # if @problem_tag.save!
-              format.html { redirect_to problem_url(@problem), notice: "Problem was successfully created." }
+              flash[:success] = "Problem was successfully created"
+              format.html { redirect_to problem_url(@problem)}
               format.json { render :show, status: :created, location: @problem }
             # end
           else
@@ -232,6 +234,7 @@ class ProblemsController < ApplicationController
     # @problem_tag.save
 
     if @problem.update(problem_params)
+      flash[:success] = "Problem was updated successfully"
       redirect_to problems_path
     end
   end
@@ -247,7 +250,8 @@ class ProblemsController < ApplicationController
     @problem.destroy
 
     respond_to do |format|
-      format.html { redirect_to problems_url, notice: "Problem was successfully destroyed." }
+      flash[:success] = "Problem was successfully destroyed."
+      format.html { redirect_to problems_url}
       format.json { head :no_content }
     end
   end

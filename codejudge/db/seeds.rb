@@ -70,6 +70,8 @@ anmol = User.create!(username: "anmol", password: "password", password_confirmat
 anmol.assignments.create!(role: role_student)
 ritchey = User.create!(username: "ritchey", password: "password", password_confirmation: "password", firstname: "philip", lastname: "r", email: "philip@tamu.edu")
 ritchey.assignments.create!(role: role_instructor)
+admin = User.create!(username: "admin", password: "password", password_confirmation: "password", firstname: "Administrator", lastname: "Account", email: "admin@tamu.edu")
+admin.assignments.create!(role: role_admin)
 
 (1..10).each do |i|
   DifficultyLevel.create(

@@ -1,4 +1,4 @@
-<%= render 'layouts/flash' %>
+
 <% content_for :js do %>
   <%= javascript_import_module_tag("channels/consumer") %>
   <%= javascript_import_module_tag("channels/grader_channel") %>
@@ -6,12 +6,11 @@
 
 
 
-<p style="color: green"><%= notice %></p>
-
 <div class="col-12">
-  <%= render "partials/link", copy: "Back to Attempts", path: attempts_path, icon: "chevron-left", classes: "link--back" %>
+  <%= render "partials/link", copy: "Back to Problems", path: problems_path, icon: "chevron-left", classes: "link--back" %>
+  <%= render 'layouts/flash' %>
 </div>
-
+<%#= render 'layouts/flash' %>
 <div>
   <%= render @attempt %>
 </div>
@@ -24,16 +23,21 @@
         <%= render "partials/test_case_card", passed: test_case.passed, finished_at: test_case.created_at, test_case_input: io[0], test_case_output: io[1] %>
         </div>
       <% end %>
+    <% elsif @error.present? %>
+      <div  class="col-12 col-md-4">
+        <%= render "partials/test_case_card_err", passed: false , error: @error  %>
+      </div>
     <% else %>
       <div  class="col-12 col-md-4">
-      <%= render "partials/test_case_card_err", passed: false , error: @error  %>
+        <%= render "partials/test_case_card_err", passed: @attempt.passed , error: nil  %>
       </div>
     <% end %>
 
 
 
+
     <% @number_ungraded_test_cases.times do |index| %>
-      <div id=<%= "test_case_#{@number_graded_test_cases + index}" %> class="col-12 col-md-4">
+      <div id=<%= "test_case_#{@number_graded_test_cases + index}" %> class="col-12 col-md-4" >
         <%= render "partials/test_case_card" %>
       </div>
     <% end %>

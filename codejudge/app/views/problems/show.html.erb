@@ -1,9 +1,8 @@
-<p id="notice" style="color: green;"><%= notice %></p>
-
 <div class="col-12">
+
   <%= render "partials/link", copy: "Back to Problems", path: problems_path, icon: "chevron-left", classes: "link--back" %>
 </div>
-
+<%= render 'layouts/flash' %>
 <h1 class="col-12 col-md-6"><%= @problem.title %></h1>
 
 <div class="col-12">
@@ -42,7 +41,7 @@
   <% end %>
 </section>
 <% if @problem.instructor_solution %>
-  <%if current_user.role? :instructor %>
+  <% if current_user.role?(:instructor) || (current_user.role?(:student) && @solution_exists) %>
     <%= link_to "Show Solution", solution_problem_url(@problem.id), :class =>"button"%>
   <%end%>
 <%end%>
