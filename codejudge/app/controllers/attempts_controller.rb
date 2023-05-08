@@ -227,7 +227,8 @@ class AttemptsController < ApplicationController
   def update
     respond_to do |format|
       if @attempt.update(attempt_params)
-        format.html { redirect_to attempt_url(@attempt), flash[:notice] = "Attempt was successfully updated." }
+        flash[:success] = "Attempt was successfully updated."
+        format.html { redirect_to attempt_url(@attempt) }
         format.json { render :show, status: :ok, location: @attempt }
       else
         format.html { render :edit, status: :unprocessable_entity }
@@ -241,7 +242,8 @@ class AttemptsController < ApplicationController
     @attempt.destroy
 
     respond_to do |format|
-      format.html { redirect_to attempts_url, flash[:notice] = "Attempt was successfully destroyed." }
+      flash[:success] = "Attempt was successfully destroyed."
+      format.html { redirect_to attempts_url}
       format.json { head :no_content }
     end
   end
