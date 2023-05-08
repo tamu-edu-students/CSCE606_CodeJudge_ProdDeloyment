@@ -87,7 +87,7 @@ class AttemptsController < ApplicationController
         format.html { redirect_to request.referer || root_path, status: :unprocessable_entity}
         format.json { render json: { error: "Language not found" }, status: :unprocessable_entity }
       end
-    elsif language.id != code_language.id
+    elsif language.id != code_language.id and language.name != "none"
       flash[:error] = "Language Restriction is enforced. Submit in " + language.name
       respond_to do |format|
         # flash[:error] = "Problem already in list!"
